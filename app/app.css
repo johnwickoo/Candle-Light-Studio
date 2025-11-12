@@ -1,15 +1,26 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+@import url('https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&family=Lexend+Deca:wght@100..900&family=Outfit:wght@100..900&family=Wittgenstein:ital,wght@0,400..900;1,400..900&display=swap');
+
+
+h1{
+  font-size: 40px;
+}
+.image-text {
+  font-size: 120px;
+  font-weight: 700;
+  line-height: normal;
+  font-family: "Wittgenstein", serif;
+  background-image: url('/homebackground.jpeg');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: absolute;
+  top:50%;
+  transform: translate(75% , -50%);
+  white-space: nowrap;
+  
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
-}

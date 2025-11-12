@@ -8,7 +8,11 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import Navbar from "./components/Navbar";
+
 import "./app.css";
+import type { reactRouter } from "@react-router/dev/vite";
+import { useLocation } from "react-router";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,6 +28,9 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   return (
     <html lang="en">
       <head>
@@ -32,7 +39,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={`relative ${
+    isHome
+      ? " h-screen overflow-hidden bg-[url('/homebackground.jpeg')] bg-cover bg-center bg-no-repeat max-h-screen"
+      : "min-h-screen bg-white"
+  }`}>
+    {isHome? <div className="absolute top-0 right-0 w-2/5 h-dvh bg-white"></div>:null}
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,7 +54,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  return (
+    <div className="pt-0">
+      <Navbar />
+      <main className="container mx-auto p-4">
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
