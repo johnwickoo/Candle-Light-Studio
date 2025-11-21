@@ -1,6 +1,6 @@
 import React from "react";
 import { addBooking } from "../utils/bookingsStore";
-import { getSlots } from "../Appwrite"
+import { createBooking } from "../Appwrite"
 
 type Props = {
   selectedDate: string | null;
@@ -44,7 +44,7 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
       // createdAt: new Date().toISOString(),
     };
     // save locally (swap-in API later)
-    getSlots(booking);
+    createBooking(booking);
     setLoading(false);
     if (onSuccess) onSuccess();
     // clear form lightly

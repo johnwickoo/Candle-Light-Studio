@@ -9,8 +9,9 @@ type Props = {
 const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function formatDate(date: Date) {
-  return date.toISOString().slice(0,10);
+  return date.toLocaleDateString("en-CA"); // gives YYYY-MM-DD safely
 }
+
 
 export default function Calendar({ selected, onSelect, markedDates = [] }: Props) {
   const [cursor, setCursor] = React.useState(() => {
@@ -49,7 +50,7 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
           if (day === null) return <div key={idx} className="h-10"/>;
           const date = new Date(year, month, day);
           const iso = formatDate(date);
-          const isSelected = selected === iso;
+          const isSelected = selected === iso && date.getMonth() === month;
           const isMarked = markedDates.includes(iso);
           return (
             <button
@@ -58,6 +59,7 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
               className={`h-10 rounded-md flex items-center justify-center text-sm
                 ${isSelected ? "bg-black text-white" : "hover:bg-gray-100"}
                 ${isMarked ? "ring-2 ring-red-300" : ""}
+                
               `}
             >
               <span>{day}</span>

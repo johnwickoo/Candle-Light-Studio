@@ -3,7 +3,7 @@ import Calendar from "../components/Calender";
 import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
 import { getBookingsForDate } from "../utils/bookingsStore";
-
+import { getBookings } from "../Appwrite";
 
 
 export default function BookPage() {
@@ -15,12 +15,12 @@ export default function BookPage() {
   
 
   React.useEffect(() => {
-    if (selectedDate) {
+    if (!selectedDate) return;
       // refresh bookings — simple approach: mark dates that have bookings
-      const bk = getBookingsForDate(selectedDate);
-      setMarked(bk.map(b => b.date)); // simple — you can mark differently
-      
-    }
+    (async () => {
+      const bk = await getBookings(selectedDate);
+      setMarked(bk.map((b: any) => b.date)); //mark differently
+    })();
   }, [selectedDate]);
   
   return (

@@ -1,4 +1,5 @@
-import { Client, ID, TablesDB } from "appwrite";
+import { Client, ID, Query, TablesDB } from "appwrite";
+import BookingForm from "./components/BookingForm";
 
 const PROJECT_ID=import.meta.env.VITE_APPWRITE_PROJECT_ID
 const REGION=import.meta.env.VITE_APPWRITE_REGION
@@ -12,7 +13,7 @@ const client = new Client()
 const tablesDB = new TablesDB(client);
 
 
-export const getSlots=(booking: { id: `${string}-${string}-${string}-${string}-${string}`; name: string; email: string; phone: string; date: string; startTime: string; duration: number; service: string; notes: string;})=>{
+export const createBooking=(booking: { id: `${string}-${string}-${string}-${string}-${string}`; name: string; email: string; phone: string; date: string; startTime: string; duration: number; service: string; notes: string;})=>{
     
     const promise = tablesDB.createRow({
     databaseId: DATABASE_ID,
@@ -29,3 +30,16 @@ promise.then(function (response) {
 
 }
 
+
+export const getBookings = async (selectedDate: string) => {
+const res = await tablesDB.listRows({
+    databaseId: DATABASE_ID,
+    tableId: TABLE_ID,
+    queries: [
+        Query.equal('date', selectedDate  // store "YYYY-MM-DD"
+),    
+    ]
+});
+
+return res.rows;
+}
