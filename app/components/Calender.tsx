@@ -9,7 +9,6 @@ type Props = {
 const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function formatDate(date: Date) {
-    console.log(date.toISOString().slice(0,10));
   return date.toISOString().slice(0,10);
 }
 

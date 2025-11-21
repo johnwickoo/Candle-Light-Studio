@@ -1,6 +1,6 @@
 import React from "react";
 import { addBooking } from "../utils/bookingsStore";
-
+import { getSlots } from "../Appwrite"
 
 type Props = {
   selectedDate: string | null;
@@ -32,19 +32,19 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
     }
     setLoading(true);
     const booking = {
-        id: crypto.randomUUID(),
+      id: crypto.randomUUID(),
       name: form.name,
       email: form.email,
       phone: form.phone,
       date: selectedDate,
-      start: selectedStart,
+      startTime: selectedStart,
       duration,
       service: form.service,
       notes: form.notes,
-      createdAt: new Date().toISOString(),
+      // createdAt: new Date().toISOString(),
     };
     // save locally (swap-in API later)
-    addBooking(booking);
+    getSlots(booking);
     setLoading(false);
     if (onSuccess) onSuccess();
     // clear form lightly
@@ -74,7 +74,6 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
         <label className="block text-sm">
           Duration
           <select value={duration} onChange={(e)=>setDuration(Number(e.target.value))} className="w-full p-2 border rounded mt-1">
-            <option value={30}>30 minutes</option>
             <option value={60}>1 hour</option>
             <option value={120}>2 hours</option>
           </select>
