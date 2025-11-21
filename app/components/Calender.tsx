@@ -23,6 +23,9 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
 
+  
+  const currentDate = new Date();
+  
   const firstDayWeek = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -33,10 +36,11 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
   for (let i = 0; i < firstDayWeek; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
+  
   return (
     <div className="bg-white rounded-2xl shadow p-4 w-full">
       <div className="flex items-center justify-between mb-3">
-        <button onClick={prev} className="px-2 py-1 rounded hover:bg-gray-100">{'‹'}</button>
+        <button onClick={prev} disabled={month < currentDate.getMonth()+1 && year <= currentDate.getFullYear()} className="px-2 py-1 rounded hover:bg-gray-100">{'‹'}</button>
         <div className="font-semibold">{cursor.toLocaleString(undefined, { month: "long", year: "numeric" })}</div>
         <button onClick={next} className="px-2 py-1 rounded hover:bg-gray-100">{'›'}</button>
       </div>
@@ -52,6 +56,7 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
           const iso = formatDate(date);
           const isSelected = selected === iso && date.getMonth() === month;
           const isMarked = markedDates.includes(iso);
+          const isDisabled = day < currentDate.getDate() && month <= currentDate.getMonth()+1 && year <= currentDate.getFullYear();
           return (
             <button
               key={idx}
@@ -59,8 +64,11 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
               className={`h-10 rounded-md flex items-center justify-center text-sm
                 ${isSelected ? "bg-black text-white" : "hover:bg-gray-100"}
                 ${isMarked ? "ring-2 ring-red-300" : ""}
-                
+                ${isDisabled ? "cursor-not-allowed text-gray-200" : ""}
               `}
+              disabled={isDisabled}
+              
+              
             >
               <span>{day}</span>
             </button>

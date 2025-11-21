@@ -19,7 +19,7 @@ export default function BookPage() {
       // refresh bookings — simple approach: mark dates that have bookings
     (async () => {
       const bk = await getBookings(selectedDate);
-      setMarked(bk.map((b: any) => b.date)); //mark differently
+      setMarked(bk.bookings.map((b: any) => b.date)); //mark differently
     })();
   }, [selectedDate]);
   

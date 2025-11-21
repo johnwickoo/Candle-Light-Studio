@@ -30,6 +30,7 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
       setError("Name & email required.");
       return;
     }
+    
     setLoading(true);
     const booking = {
       id: crypto.randomUUID(),

@@ -36,10 +36,38 @@ const res = await tablesDB.listRows({
     databaseId: DATABASE_ID,
     tableId: TABLE_ID,
     queries: [
-        Query.equal('date', selectedDate  // store "YYYY-MM-DD"
-),    
+        Query.equal('date', selectedDate),    
     ]
 });
+const bookings = res.rows || [];
+const timeRanges = getBookedTimeRanges(bookings);
 
-return res.rows;
+return {
+    bookings,
+    timeRanges
+  };
+}
+
+export const getBookedTimeRanges = (rows: any[]) => {
+    return rows.map((booking) => {
+        const [hours, minutes] = booking.startTime.split(":").map(Number);
+        const startMinutes = hours * 60 + minutes;
+        const endMinutes = startMinutes + booking.duration;
+        // console.log(rows);
+         return { startMin: startMinutes, endMin: endMinutes };
+    });
+}
+
+export const isSlotAvailable = async (
+  date: string,
+  startMin: number,
+  duration: number
+) => {
+  const { timeRanges } = await getBookings(date);
+  const end = startMin + duration;
+ return !timeRanges.some((r) => {
+    return !(end <= r.startMin || startMin >= r.endMin);
+  });
+
+
 }
