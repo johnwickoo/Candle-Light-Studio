@@ -1,6 +1,6 @@
 import React from "react";
-import { addBooking } from "../utils/bookingsStore";
 import { createBooking } from "../Appwrite"
+
 
 type Props = {
   selectedDate: string | null;
