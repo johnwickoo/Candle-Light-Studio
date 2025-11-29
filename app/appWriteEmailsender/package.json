@@ -1,0 +1,9 @@
+{
+  "name": "appwrite-email-sender",
+  "version": "1.0.0",
+  "description": "Sends booking confirmation emails.",
+  "main": "index.js",
+  "dependencies": {
+    "nodemailer": "^6.9.1"
+  }
+}

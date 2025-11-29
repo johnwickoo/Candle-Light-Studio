@@ -1,7 +1,8 @@
 import React from "react";
 import { createBooking } from "../Appwrite"
-import { isDurationAllowed } from "../Appwrite";
+import { isDurationAllowed,sendEmailConfirmation } from "../Appwrite";
 import Toast from "./toast";
+
 
 type Props = {
   selectedDate: string | null;
@@ -53,9 +54,16 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
   };
 
   try {
-    await createBooking(booking);
-   
-   
+    const newBookingDoc = await createBooking(booking);
+    sendEmailConfirmation({
+          name: form.name,
+          email: form.email,
+          date: selectedDate,
+          startTime: selectedStart,
+          duration: duration,
+          service: form.service,
+      });
+
     localStorage.setItem("lastSelectedDate", selectedDate);
    
 
@@ -93,7 +101,7 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
   return (
     <div className="bg-white rounded-2xl shadow p-4 w-full">
 
-      {showToast && <Toast message="Booking successful!" />}
+      {showToast && <Toast message="Booking successful! Confirmation email is being sent." />}
 
       <h3 className="font-semibold mb-3">Confirm booking</h3>
       <form onSubmit={submit} className="space-y-3">

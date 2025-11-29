@@ -81,3 +81,29 @@ export function isDurationAllowed(startTime: string,
         return end <= r.startMin || startHours * 60 + startMinutes >= r.endMin;
     });
 }
+
+
+const APPWRITE_EMAIL_FUNCTION_URL = 'https://cloud.appwrite.io/console/project-fra-68d063fc000f50d84cd2/functions/function-692afa6d00242cefd008'; 
+
+export const sendEmailConfirmation = async (bookingDetails: any) => {
+    // We do not await this call in the main component, but the function itself is async.
+    try {
+        const response = await fetch(APPWRITE_EMAIL_FUNCTION_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingDetails)
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            console.log("Email Function Success:", data.message);
+        } else {
+            console.error("Email Function Failed:", data.message || 'Unknown error');
+        }
+    } catch (error) {
+        console.error("Network Error: Could not reach Appwrite Function:", error);
+    }
+};
