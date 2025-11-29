@@ -83,7 +83,7 @@ export function isDurationAllowed(startTime: string,
 }
 
 
-const APPWRITE_EMAIL_FUNCTION_URL = 'https://cloud.appwrite.io/console/project-fra-68d063fc000f50d84cd2/functions/function-692afa6d00242cefd008'; 
+const APPWRITE_EMAIL_FUNCTION_URL = 'https://692afa700004685342b7.fra.appwrite.run/v1/functions/692afa6d00242cefd008/executions'; 
 
 export const sendEmailConfirmation = async (bookingDetails: any) => {
     // We do not await this call in the main component, but the function itself is async.
