@@ -1,5 +1,5 @@
 import { Client, ID, Query, TablesDB } from "appwrite";
-import BookingForm from "./components/BookingForm";
+
 
 const PROJECT_ID=import.meta.env.VITE_APPWRITE_PROJECT_ID
 const REGION=import.meta.env.VITE_APPWRITE_REGION
@@ -41,6 +41,7 @@ const res = await tablesDB.listRows({
 });
 const bookings = res.rows || [];
 const timeRanges = getBookedTimeRanges(bookings);
+console.log("Fetched bookings:", bookings);
 
 return {
     bookings,
@@ -49,25 +50,33 @@ return {
 }
 
 export const getBookedTimeRanges = (rows: any[]) => {
-    return rows.map((booking) => {
-        const [hours, minutes] = booking.startTime.split(":").map(Number);
-        const startMinutes = hours * 60 + minutes;
-        const endMinutes = startMinutes + booking.duration;
-        // console.log(rows);
-         return { startMin: startMinutes, endMin: endMinutes };
-    });
-}
-
-export const isSlotAvailable = async (
-  date: string,
-  startMin: number,
-  duration: number
-) => {
-  const { timeRanges } = await getBookings(date);
-  const end = startMin + duration;
- return !timeRanges.some((r) => {
-    return !(end <= r.startMin || startMin >= r.endMin);
+  return rows.map((booking) => {
+    const [hours, minutes] = booking.startTime.split(":").map(Number);
+    const startMin = hours * 60 + minutes;
+    const endMin = startMin + booking.duration;
+    return { startMin, endMin };
   });
+};
 
+export const isSlotAvailable = (
+startMin: number, duration: number, timeRanges: { startMin: number; endMin: number; }[]) => {
+    
+  const end = startMin + duration;
+console.log("Checking slot:", startMin, duration, end, timeRanges);
+  return !timeRanges.some((r) => {
+    // Overlap check
+    return !(end <= r.startMin || startMin >= r.endMin);
+  })
+};
 
+export function isDurationAllowed(startTime: string,
+    duration: number,
+    timeRanges: { startMin: number; endMin: number; }[]) {
+    const [startHours, startMinutes] = startTime.split(":").map(Number);
+    const end = startHours * 60 + startMinutes + duration;
+
+    return timeRanges.every((r) => {
+        // same overlap logic
+        return end <= r.startMin || startHours * 60 + startMinutes >= r.endMin;
+    });
 }

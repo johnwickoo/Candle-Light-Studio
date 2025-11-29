@@ -56,7 +56,7 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
           const iso = formatDate(date);
           const isSelected = selected === iso && date.getMonth() === month;
           const isMarked = markedDates.includes(iso);
-          const isDisabled = day < currentDate.getDate() && month <= currentDate.getMonth()+1 && year <= currentDate.getFullYear();
+          const isDisabled = day < currentDate.getDate() && month <= currentDate.getMonth() && year <= currentDate.getFullYear();
           return (
             <button
               key={idx}

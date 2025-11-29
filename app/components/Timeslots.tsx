@@ -6,6 +6,7 @@ type Props = {
   onSelect: (start: string, duration: number) => void;
   selectedStart?: string;
   defaultDuration?: number;
+  timeRanges: { startMin: number; endMin: number }[];
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -15,6 +16,7 @@ export default function TimeSlots({
   onSelect,
   selectedStart,
   defaultDuration = 60,
+  timeRanges,
 }: Props) {
 
   const startHour = 9,
@@ -33,6 +35,7 @@ export default function TimeSlots({
 
   // Load availability when date changes
   useEffect(() => {
+    console.log()
     if (!dateISO) return;
 
     const load = async () => {
@@ -40,14 +43,16 @@ export default function TimeSlots({
       for (const s of slots) {
         const [h, m] = s.split(":").map(Number);
         const startMin = h * 60 + m;
-        out[s] = await isSlotAvailable(dateISO, startMin, defaultDuration);
+        out[s] = isSlotAvailable(startMin, defaultDuration, timeRanges);
+        
       }
       setAvailability(out);
-      console.log("Availability:", out);
+      
+
     };
 
     load();
-  }, [dateISO, defaultDuration]); // reload if date or duration changes
+  }, [dateISO, defaultDuration, timeRanges]); // reload if date or duration changes
 
   if (!dateISO) {
     return <div className="bg-white rounded-2xl shadow p-4">Pick a date</div>;

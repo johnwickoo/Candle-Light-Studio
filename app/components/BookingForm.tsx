@@ -1,20 +1,24 @@
 import React from "react";
 import { createBooking } from "../Appwrite"
-
+import { isDurationAllowed } from "../Appwrite";
 
 type Props = {
   selectedDate: string | null;
   selectedStart: string | null;
   selectedDuration: number;
+  bookings: any[];
+  timeRanges: Array<{ startMin: number; endMin: number }>;
   onSuccess?: () => void;
 };
 
-export default function BookingForm({ selectedDate, selectedStart, selectedDuration, onSuccess }: Props) {
+export default function BookingForm({ selectedDate, selectedStart, selectedDuration, onSuccess, timeRanges, bookings }: Props) {
   const [form, setForm] = React.useState({ name: "", email: "", phone: "", service: "Portrait", notes: "" });
   const [duration, setDuration] = React.useState<number>(selectedDuration || 60);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+
+ 
   React.useEffect(() => {
     setDuration(selectedDuration);
   }, [selectedDuration]);
@@ -75,8 +79,8 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
         <label className="block text-sm">
           Duration
           <select value={duration} onChange={(e)=>setDuration(Number(e.target.value))} className="w-full p-2 border rounded mt-1">
-            <option value={60}>1 hour</option>
-            <option value={120}>2 hours</option>
+            <option value={60} disabled={!isDurationAllowed(selectedStart || "", 60, timeRanges)}>1 hour</option>
+            <option value={120} disabled={!isDurationAllowed(selectedStart || "", 120, timeRanges)}>2 hours</option>
           </select>
         </label>
 

@@ -11,6 +11,8 @@ export default function BookPage() {
   const [selectedStart, setSelectedStart] = React.useState<string | null>(null);
   const [duration, setDuration] = React.useState(60);
   const [marked, setMarked] = React.useState<string[]>([]);
+  const [bookings, setBookings] = React.useState<any[]>([]);
+  const [timeRanges, setTimeRanges] = React.useState<{ startMin: number; endMin: number }[]>([]); 
  
   
 
@@ -19,6 +21,8 @@ export default function BookPage() {
       // refresh bookings — simple approach: mark dates that have bookings
     (async () => {
       const bk = await getBookings(selectedDate);
+      setBookings(bk.bookings);
+      setTimeRanges(bk.timeRanges);
       setMarked(bk.bookings.map((b: any) => b.date)); //mark differently
     })();
   }, [selectedDate]);
@@ -30,13 +34,13 @@ export default function BookPage() {
       </div>
 
       <div className="col-span-1">
-        <TimeSlots dateISO={selectedDate} selectedStart={selectedStart ?? undefined} onSelect={(s, dur)=>{ setSelectedStart(s); setDuration(dur); }} defaultDuration={duration} />
+        <TimeSlots dateISO={selectedDate} selectedStart={selectedStart ?? undefined} onSelect={(s, dur)=>{ setSelectedStart(s); setDuration(dur); }} defaultDuration={duration} timeRanges={timeRanges} />
       </div>
 
       <div className="col-span-1">
         <BookingForm selectedDate={selectedDate} selectedStart={selectedStart} selectedDuration={duration} onSuccess={()=>{
-          // after success you can refresh state or show modal
-        }} />
+          
+        }} bookings={bookings} timeRanges={timeRanges} />
       </div>
     </div>
   );
