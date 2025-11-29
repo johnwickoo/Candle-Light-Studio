@@ -28,40 +28,38 @@ export default function BookPage() {
   }
 }, [reload]);
 
-//   React.useEffect(() => {
-//   if (selectedDate) {
-//     console.log("selectedDate UPDATED:", selectedDate);
-//   }
-// }, [selectedDate]);
-
 
  React.useEffect(() => {
-    if (!selectedDate) return;
+  if (!selectedDate) return;
 
-    (async () => {
-      if (reload) {
-          console.log("Forcing fresh data fetch due to RELOAD event:", selectedDate);
-      } else if (cache[selectedDate]) { 
-          console.log("Using cached data for:", selectedDate);
-          const bk = cache[selectedDate];
-          setBookings(bk.bookings);
-          setTimeRanges(bk.timeRanges);
-          setMarked(bk.bookings.map((b: any) => b.date));
-          return; // Exit here if cached
-      }
-
-      // 3. FETCH DATA (Runs if reload is true OR if date is not in cache)
-      console.log("Fetching new data from database for:", selectedDate);
-      const bk = await getBookings(selectedDate);
-      
-      // 4. UPDATE STATE AND CACHE
+  (async () => {
+    // 1. Check Cache ONLY IF the trigger was NOT a 'reload'
+    if (cache[selectedDate] && !reload) {
+      console.log("Using cached data for:", selectedDate);
+      const bk = cache[selectedDate];
       setBookings(bk.bookings);
-      setCache((prev) => ({ ...prev, [selectedDate]: bk })); // Cache the result
       setTimeRanges(bk.timeRanges);
       setMarked(bk.bookings.map((b: any) => b.date));
-      
-    })();
-  }, [selectedDate, reload]);
+      return; 
+    }
+
+    // 2. Fetch Fresh Data (because it's a new date OR a reload event)
+    console.log(`Fetching new data for ${selectedDate}.`);
+    const bk = await getBookings(selectedDate);
+    
+    // 3. Update State & Cache
+    setBookings(bk.bookings);
+    setTimeRanges(bk.timeRanges);
+    setMarked(bk.bookings.map((b: any) => b.date));
+
+    // Update the cache after a successful fetch to ensure freshness
+    setCache(prevCache => ({
+      ...prevCache,
+      [selectedDate]: bk, // Store the fresh, full booking object
+    }));
+    
+  })();
+}, [selectedDate, reload]);
   
   return (
     <div className="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
