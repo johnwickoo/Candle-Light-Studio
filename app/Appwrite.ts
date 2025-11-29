@@ -6,8 +6,7 @@ const REGION=import.meta.env.VITE_APPWRITE_REGION
 const DATABASE_ID=import.meta.env.VITE_APPWRITE_DATABASE_ID
 const TABLE_ID=import.meta.env.VITE_TABLE_ID
 const EMAIL_FUNCTION_ID = import.meta.env.VITE_EMAIL_FUNCTION_ID; // Your email function ID
- 
-console.log("Email Function ID:", EMAIL_FUNCTION_ID);
+
 const client = new Client()
     .setEndpoint(`https://fra.cloud.appwrite.io/v1`)
     .setProject(PROJECT_ID);
@@ -79,9 +78,9 @@ export function isDurationAllowed(startTime: string,
     const [startHours, startMinutes] = startTime.split(":").map(Number);
     const end = startHours * 60 + startMinutes + duration;
 
+    if (end > 1080) return false; // after 6 PM
     return timeRanges.every((r) => {
         // same overlap logic
-        if (end > 1080) return false;
         return end <= r.startMin || startHours * 60 + startMinutes >= r.endMin;
     });
 }

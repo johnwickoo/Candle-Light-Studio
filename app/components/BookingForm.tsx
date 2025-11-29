@@ -23,7 +23,7 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
  
   React.useEffect(() => {
     setDuration(selectedDuration);
-  }, [selectedDuration]);
+  }, [selectedDuration, selectedDate]);
 
   const submit = async (e: React.FormEvent) => {
   e.preventDefault();
