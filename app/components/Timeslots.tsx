@@ -7,6 +7,7 @@ type Props = {
   selectedStart?: string;
   defaultDuration?: number;
   timeRanges: { startMin: number; endMin: number }[];
+  reload?: boolean;
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -17,6 +18,7 @@ export default function TimeSlots({
   selectedStart,
   defaultDuration = 60,
   timeRanges,
+  reload
 }: Props) {
 
   const startHour = 9,
@@ -52,7 +54,7 @@ export default function TimeSlots({
     };
 
     load();
-  }, [dateISO, defaultDuration, timeRanges]); // reload if date or duration changes
+  }, [dateISO, defaultDuration, timeRanges, reload]); // reload if date or duration changes
 
   if (!dateISO) {
     return <div className="bg-white rounded-2xl shadow p-4">Pick a date</div>;

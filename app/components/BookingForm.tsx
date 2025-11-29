@@ -1,6 +1,7 @@
 import React from "react";
 import { createBooking } from "../Appwrite"
 import { isDurationAllowed } from "../Appwrite";
+import Toast from "./toast";
 
 type Props = {
   selectedDate: string | null;
@@ -16,49 +17,84 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
   const [duration, setDuration] = React.useState<number>(selectedDuration || 60);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-
+  const [showToast, setShowToast] = React.useState(false);
 
  
   React.useEffect(() => {
     setDuration(selectedDuration);
   }, [selectedDuration]);
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!selectedDate || !selectedStart) {
-      setError("Please select a date and time slot.");
-      return;
-    }
-    if (!form.name || !form.email) {
-      setError("Name & email required.");
-      return;
-    }
-    
-    setLoading(true);
-    const booking = {
-      id: crypto.randomUUID(),
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      date: selectedDate,
-      startTime: selectedStart,
-      duration,
-      service: form.service,
-      notes: form.notes,
-      // createdAt: new Date().toISOString(),
-    };
-    // save locally (swap-in API later)
-    createBooking(booking);
-    setLoading(false);
-    if (onSuccess) onSuccess();
-    // clear form lightly
-    setForm({ name: "", email: "", phone: "", service: "Portrait", notes: "" });
-    alert("Booking confirmed!");
+  const submit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
+
+  if (!selectedDate || !selectedStart) {
+    setError("Please select a date and time slot.");
+    return;
+  }
+
+  if (!form.name || !form.email) {
+    setError("Name & email required.");
+    return;
+  }
+  
+  setLoading(true);
+
+  const booking = {
+    id: crypto.randomUUID(),
+    name: form.name,
+    email: form.email,
+    phone: form.phone,
+    date: selectedDate,
+    startTime: selectedStart,
+    duration,
+    service: form.service,
+    notes: form.notes,
   };
+
+  try {
+    await createBooking(booking);
+   
+   
+    localStorage.setItem("lastSelectedDate", selectedDate);
+   
+
+    // reset form
+    setForm({
+      name: "",
+      email: "",
+      phone: "",
+      service: "Portrait",
+      notes: "",
+    });
+
+    // alert("Booking confirmed!");
+    
+
+    // Only reload AFTER async write finished
+   
+    
+    if (onSuccess) onSuccess();
+   
+
+    
+
+  } catch (err) {
+    console.error(err);
+    setError("Failed to submit booking.");
+  } finally {
+    setLoading(false);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
+  }
+};
+
 
   return (
     <div className="bg-white rounded-2xl shadow p-4 w-full">
+
+      {showToast && <Toast message="Booking successful!" />}
+
       <h3 className="font-semibold mb-3">Confirm booking</h3>
       <form onSubmit={submit} className="space-y-3">
         <div className="text-sm text-gray-600">Date: <strong>{selectedDate || "—"}</strong></div>

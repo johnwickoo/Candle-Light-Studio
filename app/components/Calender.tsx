@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 type Props = {
   selected: string | null; // "YYYY-MM-DD"
   onSelect: (dateISO: string) => void;
   markedDates?: string[]; // array of YYYY-MM-DD (booked)
+  reload?: boolean;
 };
 
 const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -13,16 +14,28 @@ function formatDate(date: Date) {
 }
 
 
-export default function Calendar({ selected, onSelect, markedDates = [] }: Props) {
+export default function Calendar({ selected, onSelect, markedDates = [], reload }: Props) {
   const [cursor, setCursor] = React.useState(() => {
     const d = new Date();
     d.setDate(1);
     return d;
   });
 
+
+  // Sync calendar month with selected date
+useEffect(() => {
+  if (selected) {
+    const d = new Date(selected);
+    setCursor(new Date(d.getFullYear(), d.getMonth(), 1));
+    setTimeout(() => {
+      localStorage.removeItem("lastSelectedDate");
+    }, 500);
+  }
+}, [selected, reload]);
+
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
-
+ 
   
   const currentDate = new Date();
   
@@ -35,6 +48,8 @@ export default function Calendar({ selected, onSelect, markedDates = [] }: Props
   const cells: (number | null)[] = [];
   for (let i = 0; i < firstDayWeek; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  
 
   
   return (

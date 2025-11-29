@@ -13,22 +13,25 @@ const client = new Client()
 const tablesDB = new TablesDB(client);
 
 
-export const createBooking=(booking: { id: `${string}-${string}-${string}-${string}-${string}`; name: string; email: string; phone: string; date: string; startTime: string; duration: number; service: string; notes: string;})=>{
-    
-    const promise = tablesDB.createRow({
-    databaseId: DATABASE_ID,
-    tableId: TABLE_ID,
-    rowId: ID.unique(),
-    data: booking
-});
+export const createBooking = (booking: {
+  id: `${string}-${string}-${string}-${string}-${string}`;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  startTime: string;
+  duration: number;
+  service: string;
+  notes: string;
+}) => {
+  return tablesDB.createRow({
+      databaseId: DATABASE_ID,
+      tableId: TABLE_ID,
+      rowId: ID.unique(),
+      data: booking,
+  });
+};
 
-promise.then(function (response) {
-    console.log(response,booking);
-}, function (error) {
-    console.log(error);
-});
-
-}
 
 
 export const getBookings = async (selectedDate: string) => {
@@ -41,7 +44,6 @@ const res = await tablesDB.listRows({
 });
 const bookings = res.rows || [];
 const timeRanges = getBookedTimeRanges(bookings);
-console.log("Fetched bookings:", bookings);
 
 return {
     bookings,
@@ -62,7 +64,6 @@ export const isSlotAvailable = (
 startMin: number, duration: number, timeRanges: { startMin: number; endMin: number; }[]) => {
     
   const end = startMin + duration;
-console.log("Checking slot:", startMin, duration, end, timeRanges);
   return !timeRanges.some((r) => {
     // Overlap check
     return !(end <= r.startMin || startMin >= r.endMin);
