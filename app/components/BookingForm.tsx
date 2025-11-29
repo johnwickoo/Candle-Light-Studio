@@ -83,17 +83,15 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
    
     
     if (onSuccess) onSuccess();
-   
-
-    
+   setShowToast(true);
+   setTimeout(() => setShowToast(false), 5000);
 
   } catch (err) {
     console.error(err);
     setError("Failed to submit booking.");
   } finally {
     setLoading(false);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 5000);
+    
   }
 };
 

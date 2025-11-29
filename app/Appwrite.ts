@@ -1,16 +1,19 @@
-import { Client, ID, Query, TablesDB } from "appwrite";
+import { Client, ID, Query, TablesDB, Functions} from "appwrite";
 
 
 const PROJECT_ID=import.meta.env.VITE_APPWRITE_PROJECT_ID
 const REGION=import.meta.env.VITE_APPWRITE_REGION
 const DATABASE_ID=import.meta.env.VITE_APPWRITE_DATABASE_ID
-const TABLE_ID=import.meta.env.VITE_TABLE_ID   
-
+const TABLE_ID=import.meta.env.VITE_TABLE_ID
+const EMAIL_FUNCTION_ID = import.meta.env.VITE_EMAIL_FUNCTION_ID; // Your email function ID
+ 
+console.log("Email Function ID:", EMAIL_FUNCTION_ID);
 const client = new Client()
     .setEndpoint(`https://fra.cloud.appwrite.io/v1`)
     .setProject(PROJECT_ID);
 
 const tablesDB = new TablesDB(client);
+const functions = new Functions(client); // ✅ Add this line
 
 
 export const createBooking = (booking: {
@@ -78,32 +81,35 @@ export function isDurationAllowed(startTime: string,
 
     return timeRanges.every((r) => {
         // same overlap logic
+        if (end > 1080) return false;
         return end <= r.startMin || startHours * 60 + startMinutes >= r.endMin;
     });
 }
 
 
-const APPWRITE_EMAIL_FUNCTION_URL = 'https://692b114d5689045eb486.fra.appwrite.run/v1/functions/692afa6d00242cefd008/executions'; 
-
+// ✅ SIMPLER VERSION: Remove the method parameter (POST is default)
 export const sendEmailConfirmation = async (bookingDetails: any) => {
-    // We do not await this call in the main component, but the function itself is async.
     try {
-        const response = await fetch(APPWRITE_EMAIL_FUNCTION_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(bookingDetails)
-        });
+        const execution = await functions.createExecution(
+            EMAIL_FUNCTION_ID,
+            JSON.stringify(bookingDetails), // body
+            false // async execution
+        );
 
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            console.log("Email Function Success:", data.message);
-        } else {
-            console.error("Email Function Failed:", data.message || 'Unknown error');
+        console.log("Email Function Success:", execution);
+        
+        // If you need to check the response
+        if (execution.responseStatusCode === 200) {
+            const response = JSON.parse(execution.responseBody);
+            if (response.success) {
+                console.log("Email sent:", response.message);
+            }
         }
+        
+        return execution;
+        
     } catch (error) {
-        console.error("Network Error: Could not reach Appwrite Function:", error);
+        console.error("Email Function Failed:", error);
+        throw error;
     }
 };
