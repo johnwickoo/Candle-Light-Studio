@@ -16,6 +16,7 @@ export default function BookPage() {
   const [timeRanges, setTimeRanges] = React.useState<{ startMin: number; endMin: number }[]>([]); 
   const [showToast, setShowToast] = React.useState(false);
   const [reload, setReload] = React.useState(false);
+  const [cache, setCache] = React.useState<Record<string, any>>({}); // New cache state
   
 
   React.useEffect(() => {
@@ -34,14 +35,31 @@ export default function BookPage() {
 // }, [selectedDate]);
 
 
-  React.useEffect(() => {
+ React.useEffect(() => {
     if (!selectedDate) return;
-      // refresh bookings — simple approach: mark dates that have bookings
+
     (async () => {
+      if (reload) {
+          console.log("Forcing fresh data fetch due to RELOAD event:", selectedDate);
+      } else if (cache[selectedDate]) { 
+          console.log("Using cached data for:", selectedDate);
+          const bk = cache[selectedDate];
+          setBookings(bk.bookings);
+          setTimeRanges(bk.timeRanges);
+          setMarked(bk.bookings.map((b: any) => b.date));
+          return; // Exit here if cached
+      }
+
+      // 3. FETCH DATA (Runs if reload is true OR if date is not in cache)
+      console.log("Fetching new data from database for:", selectedDate);
       const bk = await getBookings(selectedDate);
+      
+      // 4. UPDATE STATE AND CACHE
       setBookings(bk.bookings);
+      setCache((prev) => ({ ...prev, [selectedDate]: bk })); // Cache the result
       setTimeRanges(bk.timeRanges);
-      setMarked(bk.bookings.map((b: any) => b.date)); //mark differently
+      setMarked(bk.bookings.map((b: any) => b.date));
+      
     })();
   }, [selectedDate, reload]);
   
