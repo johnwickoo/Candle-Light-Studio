@@ -13,7 +13,7 @@ export default async ({ req, res, log }) => {
 
     if (!token) {
         log('Error: Missing verification token.');
-        return res.redirect('https://your-app.com/verification-error?msg=missing_token', 302);
+        return res.redirect('http://localhost:5173/verificationerror', 302);
     }
 
     if (!JWT_SECRET) {
@@ -64,7 +64,7 @@ export default async ({ req, res, log }) => {
         log(`Successfully verified user: ${userEmail}`);
         
         // 6. Redirect to a Success Page
-        return res.redirect('https://your-app.com/verification-success', 302);
+        return res.redirect('http://localhost:5173/book', 302);
 
     } catch (error) {
         log('Token Verification Failed: ' + error.message);
@@ -74,6 +74,6 @@ export default async ({ req, res, log }) => {
         if (error.name === 'TokenExpiredError') {
             msg = 'expired_token';
         }
-        return res.redirect(`https://your-app.com/verification-error?msg=${msg}`, 302);
+        return res.redirect(`http://localhost:5173/verificationerror?msg=${msg}`, 302);
     }
 };
