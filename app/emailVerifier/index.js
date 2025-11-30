@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { Client, Databases } from 'appwrite';
+import { Client, Databases, Query } from 'appwrite';
 
 // Ensure this matches the secret used to sign the token
 const JWT_SECRET = process.env.JWT_SECRET;
