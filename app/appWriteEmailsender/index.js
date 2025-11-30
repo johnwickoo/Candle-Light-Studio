@@ -61,6 +61,8 @@ export default async ({ req, res, log }) => {
         const BASE_VERIFICATION_URL = 'https://692c66e00024652f6922.fra.appwrite.run/'; // Your Appwrite Function URL for verification
         const verificationToken = generateVerificationToken(bookingData.email, JWT_SECRET); 
         
+
+        //did this change
         // ⚠️ Set your actual frontend domain here
        const verificationLink = `${BASE_VERIFICATION_URL}?token=${verificationToken}`
         // --------------------------------
