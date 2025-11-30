@@ -3,8 +3,8 @@ import { Client, Databases } from 'appwrite';
 
 // Ensure this matches the secret used to sign the token
 const JWT_SECRET = process.env.JWT_SECRET;
-const DATABASE_ID = 'your_database_id'; 
-const COLLECTION_ID = 'your_users_collection_id'; 
+const DATABASE_ID = process.env.APPWRITE_DATABASE_ID;
+const TABLE_ID  = process.env.APPWRITE_USERS_TABLE_ID;
 
 export default async ({ req, res, log }) => {
     
@@ -43,7 +43,7 @@ export default async ({ req, res, log }) => {
         // Assuming you have an index on the 'email' attribute.
         const response = await databases.listDocuments(
             DATABASE_ID,
-            COLLECTION_ID,
+            TABLE_ID,
             [Query.equal('email', userEmail)]
         );
 
@@ -56,7 +56,7 @@ export default async ({ req, res, log }) => {
         // 5. Update the Verification Status
         await databases.updateDocument(
             DATABASE_ID,
-            COLLECTION_ID,
+            TABLE_ID,
             userDoc.$id,
             { isVerified: true }
         );
