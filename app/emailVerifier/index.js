@@ -11,10 +11,11 @@ export default async ({ req, res, log }) => {
     // 1. Get Token from Query Parameters
     const token = req.queryString.token;
 
-
+    console.log("Received token:", token);
 
     if (!token) {
         log('Error: Missing verification token.');
+        console.log("Redirecting due to missing token");
         return res.redirect('http://localhost:5173/verificationerror', 302);
     }
 
