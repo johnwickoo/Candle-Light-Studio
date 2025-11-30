@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Assuming react-router is used
 
 
-const VERIFICATION_ENDPOINT = 'https://692c66e00024652f6922.fra.appwrite.run/';
+const VERIFICATION_ENDPOINT = import.meta.env.VITE_EMAILVERIFIER_FUNCTION_URL;
 
 function VerifyEmail() {
   const [status, setStatus] = useState('Verifying your email...');
