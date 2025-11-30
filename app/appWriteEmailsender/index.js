@@ -1,10 +1,9 @@
 import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 
-// ⚠️ NOTE: This function needs access to the SECRET, which must be loaded from env.
-
 // --- JWT Generation Function ---
-function generateVerificationToken(userId, secret) {
+// The secret key is passed as an argument from the environment variable
+function generateVerificationToken(userId, secret) { 
     const payload = {
         sub: userId,
         type: 'email_verification'
@@ -13,7 +12,8 @@ function generateVerificationToken(userId, secret) {
         expiresIn: '1h',
         issuer: 'YourAppName'
     };
-    // The secret is passed securely as an argument
+    
+    // Uses the securely passed secret to sign the token
     const token = jwt.sign(payload, secret, options); 
     return token;
 }
@@ -21,9 +21,9 @@ function generateVerificationToken(userId, secret) {
 
 export default async ({ req, res, log }) => {
     
-    // ✅ 1. CORS Headers (Keep as is)
+    // ... CORS handling remains the same ...
     res.headers = {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '*', 
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
     };
@@ -36,16 +36,16 @@ export default async ({ req, res, log }) => {
         return res.json({ success: false, message: 'Invalid request method or missing body.' }, 400);
     }
 
-    // --- SECURITY CHECK: Load Secrets ---
+    // --- SECURITY CHECK: Load Secrets from Appwrite Environment ---
     const JWT_SECRET = process.env.JWT_SECRET;
     const GMAIL_USER = process.env.GMAIL_USER;
     const GMAIL_PASS = process.env.GMAIL_PASS;
 
     if (!JWT_SECRET || !GMAIL_USER || !GMAIL_PASS) {
-        log('Configuration Error: Missing required environment variables (JWT_SECRET, GMAIL_USER, GMAIL_PASS).');
+        log('Configuration Error: Missing required environment variables.');
         return res.json({ success: false, message: 'Server configuration error.' }, 500);
     }
-    // ------------------------------------
+    // -----------------------------------------------------------
 
     try {
         const bookingData = JSON.parse(req.body);
@@ -56,10 +56,10 @@ export default async ({ req, res, log }) => {
         }
 
         // --- Generate Token and Link ---
-        // Pass the SECRET securely to the generator function
+        // 🔑 PASS the retrieved JWT_SECRET to the generator function
         const verificationToken = generateVerificationToken(bookingData.email, JWT_SECRET); 
         
-        // ⚠️ Replace 'https://your-app.com' with your actual frontend domain
+        // ⚠️ Set your actual frontend domain here
         const verificationLink = `https://your-app.com/verify-email?token=${verificationToken}`;
         // --------------------------------
 
@@ -90,7 +90,7 @@ export default async ({ req, res, log }) => {
                 <a href="${verificationLink}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
                     Verify My Email Address
                 </a>
-                <p>If you did not request this, please ignore this email.</p>
+                <p>This link is valid for 1 hour.</p>
             `
         };
 
