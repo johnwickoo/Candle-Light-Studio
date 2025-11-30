@@ -34,28 +34,35 @@ export default function TimeSlots({
 
   const slots = generateSlots();
   const [availability, setAvailability] = useState<{ [key: string]: boolean }>({});
+  const loading = Object.keys(availability).length === 0;
 
   // Load availability when date changes
   useEffect(() => {
-    console.log()
     if (!dateISO) return;
 
-    const load = async () => {
+    setAvailability({});
+
+    let isMounted = true;
+    
+    const timerId = setTimeout(() => {
+      if (!isMounted) return;
       const out: any = {};
       for (const s of slots) {
         const [h, m] = s.split(":").map(Number);
-        const startMin = h * 60 + m;
-        out[s] = isSlotAvailable(startMin, defaultDuration, timeRanges);
-        
-      }
-      setAvailability(out);
-      
+          const startMin = h * 60 + m;
 
+          out[s] = isSlotAvailable(startMin, defaultDuration, timeRanges);
+        }
+        setAvailability(out);
+      }, 500); // simulate loading
+      return () => {
+        clearTimeout(timerId); 
+        isMounted = false;
     };
-
-    load();
   }, [dateISO, defaultDuration, timeRanges, reload]); // reload if date or duration changes
 
+
+  
   if (!dateISO) {
     return <div className="bg-white rounded-2xl shadow p-4">Pick a date</div>;
   }
@@ -66,6 +73,15 @@ export default function TimeSlots({
 
       <div className="grid grid-cols-3 gap-2">
         {slots.map((s) => {
+          if (loading) {
+            return (
+              <div
+                key={s}
+                className="h-10 rounded bg-grey-500 animate-pulse"
+              />
+            );
+          }
+
           const available = availability[s];
           const active = selectedStart === s;
 

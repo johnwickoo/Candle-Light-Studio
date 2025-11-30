@@ -1,44 +1,80 @@
 import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
+
+// ⚠️ NOTE: This function needs access to the SECRET, which must be loaded from env.
+
+// --- JWT Generation Function ---
+function generateVerificationToken(userId, secret) {
+    const payload = {
+        sub: userId,
+        type: 'email_verification'
+    };
+    const options = {
+        expiresIn: '1h',
+        issuer: 'YourAppName'
+    };
+    // The secret is passed securely as an argument
+    const token = jwt.sign(payload, secret, options); 
+    return token;
+}
+
 
 export default async ({ req, res, log }) => {
     
-    // ✅ ADD CORS HEADERS FIRST - This allows your frontend to access the function
+    // ✅ 1. CORS Headers (Keep as is)
     res.headers = {
-        'Access-Control-Allow-Origin': '*', // Or specify your domain: 'http://localhost:5173'
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
     };
 
-    // Handle preflight OPTIONS request
     if (req.method === 'OPTIONS') {
         return res.send('', 204);
     }
 
-    // Validate POST request
     if (req.method !== 'POST' || !req.body) {
         return res.json({ success: false, message: 'Invalid request method or missing body.' }, 400);
     }
 
+    // --- SECURITY CHECK: Load Secrets ---
+    const JWT_SECRET = process.env.JWT_SECRET;
+    const GMAIL_USER = process.env.GMAIL_USER;
+    const GMAIL_PASS = process.env.GMAIL_PASS;
+
+    if (!JWT_SECRET || !GMAIL_USER || !GMAIL_PASS) {
+        log('Configuration Error: Missing required environment variables (JWT_SECRET, GMAIL_USER, GMAIL_PASS).');
+        return res.json({ success: false, message: 'Server configuration error.' }, 500);
+    }
+    // ------------------------------------
+
     try {
         const bookingData = JSON.parse(req.body);
         
-        if (!bookingData.email || !bookingData.name || !bookingData.date) {
+        if (!bookingData.email || !bookingData.name || !bookingData.date || !bookingData.startTime || !bookingData.duration) {
              log('Validation Error: Missing required booking details.');
              return res.json({ success: false, message: 'Missing required booking details.' }, 400);
         }
 
+        // --- Generate Token and Link ---
+        // Pass the SECRET securely to the generator function
+        const verificationToken = generateVerificationToken(bookingData.email, JWT_SECRET); 
+        
+        // ⚠️ Replace 'https://your-app.com' with your actual frontend domain
+        const verificationLink = `https://your-app.com/verify-email?token=${verificationToken}`;
+        // --------------------------------
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.GMAIL_USER, 
-                pass: process.env.GMAIL_PASS
+                user: GMAIL_USER, 
+                pass: GMAIL_PASS
             }
         });
 
         const mailOptions = {
-            from: process.env.GMAIL_USER,
+            from: GMAIL_USER,
             to: bookingData.email,
-            subject: '✅ Your Appointment Confirmation',
+            subject: '✅ Your Appointment Confirmation (Verification Required)',
             html: `
                 <h1>Thank You for Booking, ${bookingData.name}!</h1>
                 <p>Your appointment details are confirmed:</p>
@@ -48,14 +84,20 @@ export default async ({ req, res, log }) => {
                     <li><strong>Duration:</strong> ${bookingData.duration} minutes</li>
                     <li><strong>Email:</strong> ${bookingData.email}</li>
                 </ul>
-                <p>We look forward to seeing you!</p>
+                <hr>
+                <h2>Account Verification Required</h2>
+                <p>Before your booking is fully confirmed, please verify your email address by clicking the link below:</p>
+                <a href="${verificationLink}" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                    Verify My Email Address
+                </a>
+                <p>If you did not request this, please ignore this email.</p>
             `
         };
 
         await transporter.sendMail(mailOptions);
-        log(`Confirmation email sent successfully to: ${bookingData.email}`);
+        log(`Confirmation and verification email sent to: ${bookingData.email}`);
 
-        return res.json({ success: true, message: 'Email sent successfully.' });
+        return res.json({ success: true, message: 'Email sent successfully. Please check your inbox to verify.' });
 
     } catch (error) {
         log('Error sending email: ' + error.message);
