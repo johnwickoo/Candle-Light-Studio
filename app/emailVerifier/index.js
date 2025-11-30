@@ -44,19 +44,22 @@ export default async ({ req, res, log }) => {
         // 4. Find the User Document
         // You'll need to query your collection to find the document based on the email.
         // Assuming you have an index on the 'email' attribute.
+        log('DEBUG: Attempting to list documents...');
         const response = await databases.listDocuments(
             DATABASE_ID,
             TABLE_ID,
             [Query.equal('email', userEmail)]
         );
-
+        log(`DEBUG: Documents found: ${response.documents.length}`);
         const userDoc = response.documents[0];
 
         if (!userDoc) {
-            return res.json({ success: false, message: 'User not found.' }, 404);
+            log('ERROR: User document not found for email.');
+            return res.json({ status: 'error', code: 'user_not_found' }, 404);
         }
 
         // 5. Update the Verification Status
+        log(`DEBUG: Attempting to update user ID ${userDoc.$id}`);
         await databases.updateDocument(
             DATABASE_ID,
             TABLE_ID,
@@ -67,7 +70,8 @@ export default async ({ req, res, log }) => {
         log(`Successfully verified user: ${userEmail}`);
         
         // 6. Redirect to a Success Page
-        return res.redirect('http://localhost:5173/book', 302);
+        // return res.redirect('http://localhost:5173/book', 302);
+        return res.json({ status: 'success', redirectTo: '/book' }, 200);
 
     } catch (error) {
         log('Token Verification Failed: ' + error.message);
@@ -77,6 +81,7 @@ export default async ({ req, res, log }) => {
         if (error.name === 'TokenExpiredError') {
             msg = 'expired_token';
         }
-        return res.redirect(`http://localhost:5173/verificationerror?msg=${msg}`, 302);
+        // return res.redirect(`http://localhost:5173/verificationerror?msg=${msg}`, 302);
+        return res.json({ status: 'error', code: msg, redirectTo: '/verificationerror' }, 400);
     }
 };

@@ -1,39 +1,51 @@
 import React, { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router-dom'; // ⚠️ No longer needed
+import { useNavigate } from 'react-router-dom';
 
 const VERIFICATION_ENDPOINT = import.meta.env.VITE_EMAILVERIFIER_FUNCTION_URL;
 
 function VerifyEmail() {
   const [status, setStatus] = useState('Verifying your email...');
-  // const navigate = useNavigate(); // Removed
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Get the token from the URL query parameters
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get('token');
 
     if (!token) {
-      setStatus('Error: Verification link is missing the token.');
-      // Use window.location directly since we removed useNavigate
-      window.location.assign('/verification-error?msg=missing_token');
+      navigate('/verificationerror?msg=missing_token', { replace: true });
       return;
     }
 
-    // --- 2. THE FIX: Directly Navigate to the Appwrite Endpoint ---
-    // We let the browser handle the GET request and the subsequent 302 redirect.
-    // The current React component will stop rendering, and the browser will navigate away.
-    const verificationUrl = `${VERIFICATION_ENDPOINT}?token=${token}`;
-    
-    // 💡 IMPORTANT: Replace the current page in history
-    window.location.replace(verificationUrl); 
+    const verifyToken = async () => {
+      try {
+        const url = `${VERIFICATION_ENDPOINT}?token=${token}`;
+        
+        // 💡 Use fetch to get the JSON response
+        const response = await fetch(url);
+        const data = await response.json(); 
 
-  }, []); // Removed navigate from dependency array
+        if (response.ok && data.status === 'success') {
+            // Navigate based on the JSON response
+            navigate(data.redirectTo || '/book', { replace: true });
+        } else {
+            // Navigate to error page using the code provided by the backend
+            const errorCode = data.code || 'unknown_error';
+            navigate(`/verificationerror?msg=${errorCode}`, { replace: true });
+        }
+      } catch (error) {
+        console.error("Verification API call failed:", error);
+        navigate('/verificationerror?msg=network_error', { replace: true });
+      }
+    };
 
-  // The user sees this message briefly before the page redirects
+    verifyToken();
+
+  }, [navigate]);
+
   return (
     <div style={{ padding: '40px', textAlign: 'center' }}>
       <h2>⏳ {status}</h2>
-      <p>Redirecting you to complete verification...</p>
+      <p>Confirming your account...</p>
     </div>
   );
 }
