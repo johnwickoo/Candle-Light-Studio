@@ -9,7 +9,8 @@ const TABLE_ID  = process.env.APPWRITE_USERS_TABLE_ID;
 export default async ({ req, res, log }) => {
     
     // 1. Get Token from Query Parameters
-    const token = req.query.get("token");
+    const token = req.queryString.token;
+
 
 
     if (!token) {
