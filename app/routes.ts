@@ -7,6 +7,7 @@ export default [
   // Other routes
   route("gallery", "routes/gallery.tsx"),
   route("book", "routes/book.tsx"),
-
+  route("emailverifyer", "routes/emailverifyer.tsx"),
+  route("verification-error", "routes/verificationerror.tsx"),
   route("*", "routes/notfound.tsx"),
 ] satisfies RouteConfig;

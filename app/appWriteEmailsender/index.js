@@ -57,10 +57,12 @@ export default async ({ req, res, log }) => {
 
         // --- Generate Token and Link ---
         // 🔑 PASS the retrieved JWT_SECRET to the generator function
+
+        const BASE_VERIFICATION_URL = 'https://692c66e00024652f6922.fra.appwrite.run/'; // Your Appwrite Function URL for verification
         const verificationToken = generateVerificationToken(bookingData.email, JWT_SECRET); 
         
         // ⚠️ Set your actual frontend domain here
-        const verificationLink = `https://your-app.com/verify-email?token=${verificationToken}`;
+       const verificationLink = `${BASE_VERIFICATION_URL}?token=${verificationToken}`
         // --------------------------------
 
         const transporter = nodemailer.createTransport({
