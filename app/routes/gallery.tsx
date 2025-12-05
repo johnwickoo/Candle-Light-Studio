@@ -1,25 +1,56 @@
 import React, { use } from 'react'
-import { createApi } from "unsplash-js";
 import { useEffect, useState } from "react";
 
-const unsplash = createApi({
-  accessKey: import.meta.env.VITE_API_KEY,
-});
-
+type errorType = string | null;
 const gallery = () => {
   const [photos, setPhotos] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<errorType>(null);
+
+  function getErrorMessage(e: unknown): string {
+    if (isErrorWithMessage(e)) {
+        return e.message;
+    }
+    // Fallback message if it's not a standard error object
+    return 'An unknown error occurred.'; 
+}
+
+  function isErrorWithMessage(e: unknown): e is { message: string } {
+    return (
+        typeof e === 'object' &&
+        e !== null &&
+        'message' in e &&
+        typeof (e as { message: string }).message === 'string'
+    );
+} 
   useEffect(() => {
-    unsplash.photos
-      .list({ page: 1, perPage: 10 })
-      .then((result) => {
-        if (result.errors) {
-          console.log("error occurred: ", result.errors[0]);
-        } else {
-          console.log("photos received: ", result.response.results);
-          setPhotos(result.response.results);
-        }
-      });
-  }, []);
+        const fetchPhotosSecurely = async () => {
+            try {
+                // 1. Call your Appwrite function endpoint
+                const response = await fetch('YOUR_APPWRITE_FUNCTION_ENDPOINT_URL'); 
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 2. Handle the JSON response from your Appwrite function
+                if (data.error) {
+                    setError(data.message);
+                } else {
+                    setPhotos(data.photos);
+                }
+
+            } catch (e) {
+                setError(getErrorMessage(e));
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchPhotosSecurely();
+    }, []);
 
   return (
     <div>
