@@ -5,12 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "start": "node index.js"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.13",
     "unsplash-js": "^7.0.6",
-    "appwrite": "^13.0.0"
+    "appwrite": "^13.0.0",
+    "node-fetch": "^2.6.7"
   }
 }
