@@ -12,5 +12,8 @@
     "unsplash-js": "^7.0.6",
     "appwrite": "^13.0.0",
     "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0" 
   }
 }
