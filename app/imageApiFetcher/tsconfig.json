@@ -4,16 +4,18 @@
     "module": "commonjs",           
     "moduleResolution": "node",     
     "esModuleInterop": true,        
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "allowJs": true,           // <--- IMPORTANT: Allows tsc to process .js files
+    "outDir": "./dist",             // Compiled output goes here
+    "rootDir": "./",                // <--- FIX 1: The source files are in the root (./)
+    "allowJs": true,                // Important for compiling .js files
     "strict": true,                 
     "skipLibCheck": true,           
     "sourceMap": true               
   },
   "include": [
-    "**/*.js",   
-    "**/*.ts"
-    // Remove .tsx if your function code definitely has no JSX/React
+    "**/*.js",                      // Will find index.js in the root
+    "**/*.ts"                       // For future TS files
+  ],
+  "exclude": [
+    "dist"                          // <--- FIX 2: Exclude the output folder from compilation input
   ]
 }
