@@ -22,7 +22,8 @@ export default async ({ req, res }) => {
         : [];
         
     // Determine the requesting origin
-    const requestOrigin = req.headers['origin'] || req.headers['referer']; 
+    const rawRequestOrigin = req.headers['origin'] || req.headers['referer']; 
+    const requestOrigin = rawRequestOrigin ? rawRequestOrigin.trim().replace(/\/$/, '') : null;
 
     let corsOriginHeader = '*'; 
 
