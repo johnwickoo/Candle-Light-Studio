@@ -2,7 +2,6 @@ import React from "react";
 import Calendar from "../components/Calender";
 import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
-import { getBookingsForDate } from "../utils/bookingsStore";
 import { getBookings } from "../Appwrite";
 import Toast from "../components/toast";
 
