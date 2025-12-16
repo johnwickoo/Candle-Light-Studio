@@ -11,8 +11,7 @@ const client = new Client()
 const tablesDB = new TablesDB(client);
 const functions = new Functions(client);
 
-console.log("Request origin:", req.headers.origin);
-console.log("Allowed origins:", process.env.ALLOWED_ORIGINS);
+
 // Helper to handle CORS
 const getCorsHeaders = (req) => {
   const allowedOrigins = process.env.ALLOWED_ORIGINS
@@ -56,7 +55,12 @@ const createBooking = async (booking, res, corsHeaders) => {
 
 // Main handler
 export default async ({ req, res }) => {
+  console.log("Request origin:", req.headers.origin);
+console.log("Allowed origins:", process.env.ALLOWED_ORIGINS);
+
   const corsHeaders = getCorsHeaders(req);
+
+  
 
   // 1️⃣ Handle preflight
   if (req.method === "OPTIONS") {
