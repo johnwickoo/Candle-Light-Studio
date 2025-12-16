@@ -55,35 +55,39 @@ const createBooking = async (booking, res, corsHeaders) => {
 
 // Main handler
 export default async ({ req, res }) => {
-  log("Request origin:", req.headers.origin);
-  log("Allowed origins:", process.env.ALLOWED_ORIGINS);
+  // ✅ Inside the handler
+  log("Function triggered");
+  console.log("Request method:", req.method);
+  console.log("Request origin:", req.headers.origin);
 
   const corsHeaders = getCorsHeaders(req);
 
-  
-
-  // 1️⃣ Handle preflight
+  // Preflight handling
   if (req.method === "OPTIONS") {
+    console.log("Handling OPTIONS preflight");
     return res.send("", 204, corsHeaders);
   }
 
-  // 2️⃣ Parse JSON body safely
   let body = {};
   try {
     body = JSON.parse(req.body || "{}");
+    console.log("Parsed body:", body);
   } catch (err) {
+    console.error("Invalid JSON:", err);
     return res.json({ error: "Invalid JSON" }, 400, corsHeaders);
   }
 
-  // 3️⃣ Route actions
+  // Route actions
   if (body.action === "list") {
+    console.log("Action: list");
     return listBookings(body.date, res, corsHeaders);
   }
 
   if (body.action === "create") {
+    console.log("Action: create");
     return createBooking(body.booking, res, corsHeaders);
   }
 
-  // 4️⃣ Default fallback
+  console.log("Invalid action:", body.action);
   return res.json({ error: "Invalid action" }, 400, corsHeaders);
 };
