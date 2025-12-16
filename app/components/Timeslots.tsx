@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { isSlotAvailable } from "../Appwrite";
+import { isSlotAvailable } from "../booking.utils";
 
 type Props = {
   dateISO: string | null;

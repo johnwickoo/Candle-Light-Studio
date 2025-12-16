@@ -1,6 +1,7 @@
 import React from "react";
-import { createBooking } from "../Appwrite"
-import { isDurationAllowed,sendEmailConfirmation } from "../Appwrite";
+import { createBooking } from "../booking.api"
+import { isDurationAllowed} from "../booking.utils";
+// import {sendEmailConfirmation } from "../booking.api";
 import Toast from "./toast";
 
 
@@ -55,14 +56,14 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
 
   try {
     const newBookingDoc = await createBooking(booking);
-    sendEmailConfirmation({
-          name: form.name,
-          email: form.email,
-          date: selectedDate,
-          startTime: selectedStart,
-          duration: duration,
-          service: form.service,
-      });
+    // sendEmailConfirmation({
+    //       name: form.name,
+    //       email: form.email,
+    //       date: selectedDate,
+    //       startTime: selectedStart,
+    //       duration: duration,
+    //       service: form.service,
+    //   });
 
     localStorage.setItem("lastSelectedDate", selectedDate);
    

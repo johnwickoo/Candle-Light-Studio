@@ -1,0 +1,13 @@
+{
+  "name": "appwrite-database-caller",
+  "version": "1.0.0",
+  "description": "Appwrite function to call database operations",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "appwrite": "^13.0.0"
+  }
+}

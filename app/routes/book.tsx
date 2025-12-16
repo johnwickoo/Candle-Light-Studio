@@ -2,7 +2,7 @@ import React from "react";
 import Calendar from "../components/Calender";
 import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
-import { getBookings } from "../Appwrite";
+import { getBookings } from "../booking.api";
 import Toast from "../components/toast";
 
 
@@ -31,6 +31,7 @@ export default function BookPage() {
  React.useEffect(() => {
   if (!selectedDate) return;
 
+  
   (async () => {
     // 1. Check Cache ONLY IF the trigger was NOT a 'reload'
     if (cache[selectedDate] && !reload) {
@@ -44,17 +45,23 @@ export default function BookPage() {
 
     // 2. Fetch Fresh Data (because it's a new date OR a reload event)
     console.log(`Fetching new data for ${selectedDate}.`);
-    const bk = await getBookings(selectedDate);
+      // 3. Update State & Cache
+      getBookings(selectedDate).then((data) => {
+      setBookings(data.bookings);
+      setTimeRanges(data.timeRanges);
+      setMarked(data.map((b: any) => b.date));
+    });
+    // const bk = await getBookings(selectedDate);
     
     // 3. Update State & Cache
-    setBookings(bk.bookings);
-    setTimeRanges(bk.timeRanges);
-    setMarked(bk.bookings.map((b: any) => b.date));
+    // setBookings(bk.bookings);
+    // setTimeRanges(bk.timeRanges);
+    // setMarked(bk.bookings.map((b: any) => b.date));
 
     // Update the cache after a successful fetch to ensure freshness
     setCache(prevCache => ({
       ...prevCache,
-      [selectedDate]: bk, // Store the fresh, full booking object
+      [selectedDate]: bookings, // Store the fresh, full booking object
     }));
     
   })();
