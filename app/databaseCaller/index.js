@@ -55,8 +55,8 @@ const createBooking = async (booking, res, corsHeaders) => {
 
 // Main handler
 export default async ({ req, res }) => {
-  console.log("Request origin:", req.headers.origin);
-console.log("Allowed origins:", process.env.ALLOWED_ORIGINS);
+  log("Request origin:", req.headers.origin);
+  log("Allowed origins:", process.env.ALLOWED_ORIGINS);
 
   const corsHeaders = getCorsHeaders(req);
 
