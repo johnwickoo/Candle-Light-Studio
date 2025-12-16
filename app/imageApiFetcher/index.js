@@ -49,7 +49,7 @@ export default async ({ req, res }) => {
           message: unsplashResponse.errors.join(', '),
         },
         500,
-        corsHeaders
+         
       );
     }
 
