@@ -1,13 +1,16 @@
 {
-  "name": "appwrite-database-caller",
+  "name": "starter-template",
   "version": "1.0.0",
-  "description": "Appwrite function to call database operations",
-  "main": "index.js",
+  "description": "",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "format": "prettier --write ."
   },
   "dependencies": {
-    "appwrite": "^13.0.0"
+    "node-appwrite": "^14.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
   }
 }
