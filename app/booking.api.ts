@@ -113,7 +113,7 @@
 //     }
 // };
 
-const BOOKING_FUNCTION_ID = import.meta.env.VITE_BOOKING_FUNCTION_ID;
+const BOOKING_FUNCTION_URL = import.meta.env.VITE_BOOKING_FUNCTION_URL;
 
 type BookingPayload = {
   name: string;
@@ -127,7 +127,7 @@ type BookingPayload = {
 };
 
 export const getBookings = async (date: string) => {
-  const res = await fetch(`/functions/${BOOKING_FUNCTION_ID}`, {
+  const res = await fetch(BOOKING_FUNCTION_URL, {
     method: "POST",
     body: JSON.stringify({
       action: "list",
@@ -139,7 +139,7 @@ export const getBookings = async (date: string) => {
 };
 
 export const createBooking = async (booking: BookingPayload) => {
-  const res = await fetch(`/functions/${BOOKING_FUNCTION_ID}`, {
+  const res = await fetch(BOOKING_FUNCTION_URL, {
     method: "POST",
     body: JSON.stringify({
       action: "create",
