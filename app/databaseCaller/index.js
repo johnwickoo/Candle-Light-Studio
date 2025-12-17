@@ -40,10 +40,12 @@ const listBookings = async (date, res, corsHeaders) => {
       [Query.equal("date", date)]
     );
     const bookings = response.documents;
-    const timeRanges = bookings.map(b => ({
-      startMin: b.startTime,
-      duration: b.duration,
-    }));
+    const timeRanges = bookings.map(b => {
+      const [hours, minutes] = b.startTime.split(":").map(Number);
+      const startMin = hours * 60 + minutes;
+      const endMin = startMin + b.duration;
+      return { startMin, endMin };
+    });
     log("TimeRanges:", timeRanges);
     log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
     return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
