@@ -86,6 +86,7 @@ log("Received request:", req.method, req.url); // Logging the request method and
   if (body.action === "list") {
     log("Action: list");
     return await listBookings(body.date, res, corsHeaders);
+    log("Listed bookings for date:", body.date); // Log after listing bookings
   }
 
   if (body.action === "create") {
