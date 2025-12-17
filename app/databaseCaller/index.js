@@ -39,7 +39,7 @@ const listBookings = async (date, res, corsHeaders) => {
       TABLE_ID, 
       [Query.equal("date", date)]
     );
-
+    log("List Bookings Response:", response); // Log the response from listing bookings
     return res.json({ error: false, bookings: response.documents }, 200, corsHeaders);
   } catch (err) {
     return res.json({ error: true, message: err.message }, 500, corsHeaders);
