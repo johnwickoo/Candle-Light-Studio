@@ -22,8 +22,6 @@ export default function BookPage() {
   const saved = localStorage.getItem("lastSelectedDate");
   if (saved) {
     setSelectedDate(saved);
-    console.log("Restored date from localStorage:", saved);
-    
   }
 }, [reload]);
 
@@ -53,15 +51,16 @@ React.useEffect(() => {
         timeRanges: data.timeRanges,
       },
     }));
+
+    localStorage.setItem("lastSelectedDate", selectedDate);
+    
+
   });
 }, [selectedDate, reload]);
-
-  
 React.useEffect(() => {
-  console.log("Bookings updated:", bookings);
-  console.log("Fetching bookings for date:", selectedDate);
+  console.log("TimeRanges updated:", selectedDate, timeRanges);
+}, [timeRanges]);
 
-}, [bookings]);
   return (
     <div className="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
       <div className="col-span-1">

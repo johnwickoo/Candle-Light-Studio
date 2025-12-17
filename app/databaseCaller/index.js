@@ -44,7 +44,7 @@ const listBookings = async (date, res, corsHeaders) => {
       startMin: b.startMin,
       endMin: b.endMin,
     }));
-
+    log("TimeRanges:", timeRanges);
     log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
     return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
   } catch (err) {

@@ -20,7 +20,7 @@ export default function TimeSlots({
   timeRanges,
   reload
 }: Props) {
-
+  // console.log("TimeRanges in TimeSlots:", timeRanges);
   const startHour = 9,
     endHour = 18;
 
