@@ -25,16 +25,17 @@ const getCorsHeaders = (req) => {
   return {
     "Access-Control-Allow-Origin": corsOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 };
 
 // Function to list bookings
 const listBookings = async (date, res, corsHeaders) => {
+  log("Fetching bookings for date:", date);
   try {
     const response = await tablesDB.listDocuments(TABLE_ID, [
       // Example filter: you can adjust according to your schema
-      // Query.equal("date", date)
+      Query.equal("date", date)
     ]);
 
     return res.json({ error: false, bookings: response.documents }, 200, corsHeaders);
@@ -56,7 +57,7 @@ const createBooking = async (booking, res, corsHeaders) => {
 // Main handler
 export default async ({ req, res }) => {
   // ✅ Inside the handler
-  log("Function triggered");
+  console.log("Function triggered");
   console.log("Request method:", req.method);
   console.log("Request origin:", req.headers.origin);
 

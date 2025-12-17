@@ -129,8 +129,10 @@ type BookingPayload = {
 
 export const getBookings = async (date: string) => {
   const res = await fetch(BOOKING_FUNCTION_URL, {
-
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       action: "list",
       date
@@ -143,6 +145,9 @@ export const getBookings = async (date: string) => {
 export const createBooking = async (booking: BookingPayload) => {
   const res = await fetch(BOOKING_FUNCTION_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json", // 👈 This is critical
+    },
     body: JSON.stringify({
       action: "create",
       booking
