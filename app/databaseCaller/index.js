@@ -39,8 +39,14 @@ const listBookings = async (date, res, corsHeaders) => {
       TABLE_ID, 
       [Query.equal("date", date)]
     );
-    log("List Bookings Response:", response); // Log the response from listing bookings
-    return res.json({ error: false, bookings: response.documents }, 200, corsHeaders);
+    const bookings = response.documents;
+    const timeRanges = bookings.map(b => ({
+      startMin: b.startMin,
+      endMin: b.endMin,
+    }));
+
+    log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
+    return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
   } catch (err) {
     log("Error listing bookings:", err.message); // Log the error if listing fails
     return res.json({ error: true, message: err.message }, 500, corsHeaders);
@@ -59,15 +65,9 @@ const createBooking = async (booking, res, corsHeaders) => {
       'unique()', 
       booking
     );
-    const bookings = response.documents;
-    const timeRanges = bookings.map(b => ({
-      startMin: b.startMin,
-      endMin: b.endMin,
-    }));
 
-    log("List Bookings Response:", { bookings, timeRanges });
-    return res.json({ error: false,  bookings,
-        timeRanges,}, 201, corsHeaders);
+    log("List Bookings Response:", { booking: response });
+    return res.json({ error: false, booking: response }, 201, corsHeaders);
   } catch (err) {
     return res.json({ error: true, message: err.message }, 500, corsHeaders);
   }

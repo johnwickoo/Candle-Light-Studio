@@ -28,49 +28,34 @@ export default function BookPage() {
 }, [reload]);
 
 
- React.useEffect(() => {
+React.useEffect(() => {
   if (!selectedDate) return;
 
-  
-  (async () => {
-    // 1. Check Cache ONLY IF the trigger was NOT a 'reload'
-    if (cache[selectedDate] && !reload) {
-      console.log("Using cached data for:", selectedDate);
-      const bk = cache[selectedDate];
-      setBookings(bk.bookings);
-      setTimeRanges(bk.timeRanges);
-      setMarked(bk.bookings.map((b: any) => b.date));
-      return; 
-    }
+  // Cache hit
+  if (cache[selectedDate] && !reload) {
+    const bk = cache[selectedDate];
+    setBookings(bk.bookings);
+    setTimeRanges(bk.timeRanges);
+    setMarked(bk.bookings.map((b: any) => b.date));
+    return;
+  }
 
-    // 2. Fetch Fresh Data (because it's a new date OR a reload event)
-    
-    console.log(`Fetching new data for ${selectedDate}.`);
-      // 3. Update State & Cache
-      getBookings(selectedDate).then((data) => {
-        console.log("Fetched bookings data:", data);
-        console.log(data.bookings,data.timeRanges);
+  // Fetch
+  getBookings(selectedDate).then((data) => {
+    setBookings(data.bookings);
+    setTimeRanges(data.timeRanges);
+    setMarked(data.bookings.map((b: any) => b.date));
 
-        console.log("About to set bookings with:", data.bookings);
-      setBookings([...data.bookings]);
-      setTimeRanges(data.timeRanges);
-      setMarked(data.bookings.map((b: any) => b.date));
-    });
-    // const bk = await getBookings(selectedDate);
-    
-    // 3. Update State & Cache
-    // setBookings(bk.bookings);
-    // setTimeRanges(bk.timeRanges);
-    // setMarked(bk.bookings.map((b: any) => b.date));
-
-    // Update the cache after a successful fetch to ensure freshness
-    setCache(prevCache => ({
-      ...prevCache,
-      [selectedDate]: { bookings, timeRanges}, // Store the fresh, full booking object
+    setCache(prev => ({
+      ...prev,
+      [selectedDate]: {
+        bookings: data.bookings,
+        timeRanges: data.timeRanges,
+      },
     }));
-    
-  })();
+  });
 }, [selectedDate, reload]);
+
   
 React.useEffect(() => {
   console.log("Bookings updated:", bookings);
