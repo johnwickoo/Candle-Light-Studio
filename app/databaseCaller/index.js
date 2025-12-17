@@ -41,8 +41,8 @@ const listBookings = async (date, res, corsHeaders) => {
     );
     const bookings = response.documents;
     const timeRanges = bookings.map(b => ({
-      startMin: b.startMin,
-      endMin: b.endMin,
+      startMin: b.startTime,
+      duration: b.duration,
     }));
     log("TimeRanges:", timeRanges);
     log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
