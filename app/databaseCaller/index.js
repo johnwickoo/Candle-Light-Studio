@@ -31,6 +31,7 @@ const getCorsHeaders = (req) => {
 
 // Function to list bookings
 const listBookings = async (date, res, corsHeaders) => {
+  log("Listing bookings for date:", date ,res, corsHeaders, typeof date); // Log input parameters
   try {
     // Fixed: Changed tablesDB to databases
     // Fixed: Included DATABASE_ID as the first argument
