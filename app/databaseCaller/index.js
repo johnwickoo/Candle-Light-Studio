@@ -63,7 +63,9 @@ const createBooking = async (booking, res, corsHeaders) => {
 // Main handler
 export default async ({ req, res, log, error }) => { // Added log/error from context
   const corsHeaders = getCorsHeaders(req);
-
+log("Received request:", req.method, req.url); // Logging the request method and URL
+console.log("Request Headers:", req.headers); // Logging request headers
+  // Handle preflight
   if (req.method === "OPTIONS") {
     return res.send("", 204, corsHeaders);
   }
