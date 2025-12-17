@@ -42,8 +42,9 @@ const listBookings = async (date, res, corsHeaders) => {
     log("List Bookings Response:", response); // Log the response from listing bookings
     return res.json({ error: false, bookings: response.documents }, 200, corsHeaders);
   } catch (err) {
-    return res.json({ error: true, message: err.message }, 500, corsHeaders);
     log("Error listing bookings:", err.message); // Log the error if listing fails
+    return res.json({ error: true, message: err.message }, 500, corsHeaders);
+    
   }
 };
 
