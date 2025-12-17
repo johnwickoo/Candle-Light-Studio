@@ -3,7 +3,7 @@ import { Client, Databases, Query } from 'node-appwrite'; // Added Query
 
 const PROJECT_ID = process.env.PUBLIC_APPWRITE_PROJECT_ID;
 const DATABASE_ID = process.env.PUBLIC_APPWRITE_DATABASE_ID;
-const TABLE_ID = process.env.PUBLIC_APPWRITE_COLLECTION_ID;
+const TABLE_ID = process.env.PUBLIC_APPWRITE_TABLE_ID;
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
