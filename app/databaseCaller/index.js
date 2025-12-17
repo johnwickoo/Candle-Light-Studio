@@ -59,7 +59,15 @@ const createBooking = async (booking, res, corsHeaders) => {
       'unique()', 
       booking
     );
-    return res.json({ error: false, booking: response }, 201, corsHeaders);
+    const bookings = response.documents;
+    const timeRanges = bookings.map(b => ({
+      startMin: b.startMin,
+      endMin: b.endMin,
+    }));
+
+    log("List Bookings Response:", { bookings, timeRanges });
+    return res.json({ error: false,  bookings,
+        timeRanges,}, 201, corsHeaders);
   } catch (err) {
     return res.json({ error: true, message: err.message }, 500, corsHeaders);
   }

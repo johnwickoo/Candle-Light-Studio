@@ -44,12 +44,17 @@ export default function BookPage() {
     }
 
     // 2. Fetch Fresh Data (because it's a new date OR a reload event)
+    
     console.log(`Fetching new data for ${selectedDate}.`);
       // 3. Update State & Cache
       getBookings(selectedDate).then((data) => {
-      setBookings(data.bookings);
+        console.log("Fetched bookings data:", data);
+        console.log(data.bookings,data.timeRanges);
+
+        console.log("About to set bookings with:", data.bookings);
+      setBookings([...data.bookings]);
       setTimeRanges(data.timeRanges);
-      setMarked(data.map((b: any) => b.date));
+      setMarked(data.bookings.map((b: any) => b.date));
     });
     // const bk = await getBookings(selectedDate);
     
@@ -61,12 +66,17 @@ export default function BookPage() {
     // Update the cache after a successful fetch to ensure freshness
     setCache(prevCache => ({
       ...prevCache,
-      [selectedDate]: bookings, // Store the fresh, full booking object
+      [selectedDate]: { bookings, timeRanges}, // Store the fresh, full booking object
     }));
     
   })();
 }, [selectedDate, reload]);
   
+React.useEffect(() => {
+  console.log("Bookings updated:", bookings);
+  console.log("Fetching bookings for date:", selectedDate);
+
+}, [bookings]);
   return (
     <div className="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
       <div className="col-span-1">
