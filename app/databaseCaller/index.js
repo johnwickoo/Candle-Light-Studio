@@ -51,8 +51,8 @@ const listBookings = async (date, res, corsHeaders) => {
       const endMin = startMin + b.duration;
       return { startMin, endMin };
     });
-    // log("TimeRanges:", timeRanges);
-    // log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
+    log("TimeRanges:", timeRanges);
+    log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
     return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
   } catch (err) {
     log("Error listing bookings:", err.message); // Log the error if listing fails
