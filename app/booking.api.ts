@@ -114,7 +114,10 @@
 // };
 
 const BOOKING_FUNCTION_URL = import.meta.env.VITE_BOOKING_FUNCTION_URL;
-console.log("BOOKING_FUNCTION_URL:", BOOKING_FUNCTION_URL);
+if (!BOOKING_FUNCTION_URL) {
+  throw new Error("VITE_BOOKING_FUNCTION_URL is undefined");
+}
+
 type BookingPayload = {
   name: string;
   email: string;

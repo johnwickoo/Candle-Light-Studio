@@ -57,9 +57,7 @@ React.useEffect(() => {
 
   });
 }, [selectedDate, reload]);
-React.useEffect(() => {
-  console.log("TimeRanges updated:", selectedDate, timeRanges);
-}, [timeRanges]);
+
 
   return (
     <div className="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">

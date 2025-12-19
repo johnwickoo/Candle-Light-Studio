@@ -46,8 +46,8 @@ const listBookings = async (date, res, corsHeaders) => {
       const endMin = startMin + b.duration;
       return { startMin, endMin };
     });
-    log("TimeRanges:", timeRanges);
-    log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
+    // log("TimeRanges:", timeRanges);
+    // log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
     return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
   } catch (err) {
     log("Error listing bookings:", err.message); // Log the error if listing fails
@@ -68,7 +68,7 @@ const createBooking = async (booking, res, corsHeaders) => {
       booking
     );
 
-    log("List Bookings Response:", { booking: response });
+    // log("List Bookings Response:", { booking: response });
     return res.json({ error: false, booking: response }, 201, corsHeaders);
   } catch (err) {
     return res.json({ error: true, message: err.message }, 500, corsHeaders);
@@ -78,7 +78,7 @@ const createBooking = async (booking, res, corsHeaders) => {
 // Main handler
 export default async ({ req, res, log, error }) => { // Added log/error from context
   const corsHeaders = getCorsHeaders(req);
-log("Received request:", req.method, req.url); // Logging the request method and URL
+// log("Received request:", req.method, req.url); // Logging the request method and URL
 
   // Handle preflight
   if (req.method === "OPTIONS") {
@@ -97,13 +97,13 @@ log("Received request:", req.method, req.url); // Logging the request method and
 
   if (body.action === "list") {
 
-    log("Action: list" + body.date);
+    // log("Action: list" + body.date);
     return await listBookings(body.date, res, corsHeaders);
-    log("Listed bookings for date:", body.date); // Log after listing bookings
+    
   }
 
   if (body.action === "create") {
-    log("Action: create");
+    // log("Action: create");
     return await createBooking(body.booking, res, corsHeaders);
   }
 
