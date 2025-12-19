@@ -72,7 +72,9 @@ const createBooking = async (booking, res, corsHeaders) => {
       'unique()', 
       booking
     );
-    
+  log("Booking created successfully: sending email", response);
+
+    // Send confirmation email  
   sendEmailConfirmation(response).catch(err => {
       log("Email failed but booking succeeded:", err.message);
     });
