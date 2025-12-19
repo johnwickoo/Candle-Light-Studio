@@ -55,7 +55,7 @@ const gallery = () => {
   return (
     <div>
       <h1>Gallery</h1>
-      <div className='columns-3 gap-4'>
+      <div className='columns-1 gap-4 md:columns-2 lg:columns-3 p-4'>
         {photos.map((photo) => (
           <img className='mb-4 w-full h-auto' key={photo.id} src={photo.urls.small} alt={photo.alt_description} />
         ))}

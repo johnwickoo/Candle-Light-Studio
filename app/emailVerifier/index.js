@@ -16,7 +16,7 @@ export default async ({ req, res, log }) => {
     if (!token) {
         log('Error: Missing verification token.');
         console.log("Redirecting due to missing token");
-        return res.redirect('http://localhost:5173/verificationerror', 302);
+        return res.redirect('https://candle-light-studio-xaxc.vercel.app/verificationerror', 302);
     }
 
     if (!JWT_SECRET) {

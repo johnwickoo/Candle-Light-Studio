@@ -39,7 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={`relative ${
+      <body className={`relative w-full ${
     isHome
       ? " h-screen overflow-hidden bg-[url('/homebackground.jpeg')] bg-cover bg-center bg-no-repeat max-h-screen"
       : "min-h-screen bg-white"
