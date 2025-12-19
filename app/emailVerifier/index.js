@@ -70,8 +70,8 @@ export default async ({ req, res, log }) => {
         log(`Successfully verified user: ${userEmail}`);
         
         // 6. Redirect to a Success Page
-        // return res.redirect('http://localhost:5173/book', 302);
-        return res.json({ status: 'success', redirectTo: '/book' }, 200);
+        return res.redirect('https://candle-light-studio-xaxc.vercel.app/book', 302);
+        // return res.json({ status: 'success', redirectTo: '/book' }, 200);
 
     } catch (error) {
         log('Token Verification Failed: ' + error.message);
@@ -81,7 +81,7 @@ export default async ({ req, res, log }) => {
         if (error.name === 'TokenExpiredError') {
             msg = 'expired_token';
         }
-        // return res.redirect(`http://localhost:5173/verificationerror?msg=${msg}`, 302);
-        return res.json({ status: 'error', code: msg, redirectTo: '/verificationerror' }, 400);
+        return res.redirect(`https://candle-light-studio-xaxc.vercel.app/verificationerror?msg=${msg}`, 302);
+        // return res.json({ status: 'error', code: msg, redirectTo: '/verificationerror' }, 400);
     }
 };
