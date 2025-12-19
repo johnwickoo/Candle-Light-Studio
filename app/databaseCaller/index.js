@@ -11,7 +11,14 @@ if (!PROJECT_ID || !DATABASE_ID || !TABLE_ID || !EMAIL_FUNCTION_ID) {
 }
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
-  .setProject(PROJECT_ID);
+  .setProject(PROJECT_ID)
+  .setKey(process.env.APPWRITE_API_KEY); // Use server-side API key
+
+  console.log("Appwrite Client Configured:", {
+    endpoint: "https://fra.cloud.appwrite.io/v1",
+    project: PROJECT_ID,
+    APPWRITE_API_KEY: process.env.APPWRITE_API_KEY ? "SET" : "NOT SET"
+  });
   
 
 const databases = new Databases(client);
