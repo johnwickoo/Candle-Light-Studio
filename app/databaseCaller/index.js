@@ -1,5 +1,6 @@
 import { log } from 'console';
 import { Client, Databases, Query, Functions} from 'node-appwrite'; // Added Query
+import { send } from 'vite';
 
 const PROJECT_ID = process.env.PUBLIC_APPWRITE_PROJECT_ID;
 const DATABASE_ID = process.env.PUBLIC_APPWRITE_DATABASE_ID;
@@ -72,6 +73,7 @@ const createBooking = async (booking, res, corsHeaders) => {
       'unique()', 
       booking
     );
+    log("Sending email confirmation...");
   sendEmailConfirmation(response).catch(err => {
       log("Email failed but booking succeeded:", err.message);
     });
