@@ -118,13 +118,15 @@ export default async ({ req, res, log, error }) => { // Added log/error from con
   return res.json({ error: "Invalid action" }, 400, corsHeaders);
 };
 
- export const sendEmailConfirmation = async (bookingDetails) => {
+const sendEmailConfirmation = async (bookingDetails) => {
+  log("Preparing to send email for booking:", bookingDetails);
     try {
         const execution = await functions.createExecution(
             EMAIL_FUNCTION_ID,
             JSON.stringify(bookingDetails), // body
             false // async execution
         );
+        log("Email Function Execution Result:", execution);
         return execution;
         
     } catch (error) {
