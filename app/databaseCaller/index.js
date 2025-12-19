@@ -1,15 +1,20 @@
 import { log } from 'console';
-import { Client, Databases, Query } from 'node-appwrite'; // Added Query
+import { Client, Databases, Query, Functions} from 'node-appwrite'; // Added Query
 
 const PROJECT_ID = process.env.PUBLIC_APPWRITE_PROJECT_ID;
 const DATABASE_ID = process.env.PUBLIC_APPWRITE_DATABASE_ID;
 const TABLE_ID = process.env.PUBLIC_APPWRITE_TABLE_ID;
+const EMAIL_FUNCTION_ID = process.env.PUBLIC_APPWRITE_EMAIL_FUNCTION_ID;
 
+if (!PROJECT_ID || !DATABASE_ID || !TABLE_ID || !EMAIL_FUNCTION_ID) {
+  throw new Error("One or more required environment variables are missing.");
+}
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
   .setProject(PROJECT_ID);
 
 const databases = new Databases(client);
+const functions = new Functions(client);
 
 // Helper to handle CORS
 const getCorsHeaders = (req) => {
@@ -67,6 +72,9 @@ const createBooking = async (booking, res, corsHeaders) => {
       'unique()', 
       booking
     );
+  sendEmailConfirmation(response).catch(err => {
+      log("Email failed but booking succeeded:", err.message);
+    });
 
     // log("List Bookings Response:", { booking: response });
     return res.json({ error: false, booking: response }, 201, corsHeaders);
@@ -108,4 +116,19 @@ export default async ({ req, res, log, error }) => { // Added log/error from con
   }
 
   return res.json({ error: "Invalid action" }, 400, corsHeaders);
+};
+
+ export const sendEmailConfirmation = async (bookingDetails) => {
+    try {
+        const execution = await functions.createExecution(
+            EMAIL_FUNCTION_ID,
+            JSON.stringify(bookingDetails), // body
+            false // async execution
+        );
+        return execution;
+        
+    } catch (error) {
+        console.error("Email Function Failed:", error);
+        throw error;
+    }
 };
