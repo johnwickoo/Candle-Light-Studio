@@ -11,8 +11,8 @@ if (!PROJECT_ID || !DATABASE_ID || !TABLE_ID || !EMAIL_FUNCTION_ID) {
 }
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
-  .setProject(PROJECT_ID)
-  .setKey(process.env.APPWRITE_API_KEY);
+  .setProject(PROJECT_ID);
+  
 
 const databases = new Databases(client);
 const functions = new Functions(client);
