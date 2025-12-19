@@ -114,7 +114,7 @@
 // };
 
 const BOOKING_FUNCTION_URL = import.meta.env.VITE_BOOKING_FUNCTION_URL;
-
+console.log("BOOKING_FUNCTION_URL:", BOOKING_FUNCTION_URL);
 type BookingPayload = {
   name: string;
   email: string;
