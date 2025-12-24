@@ -41,7 +41,7 @@ export default async ({ req, res, log }) => {
 
       return res.send(
         JSON.stringify({ error: false, bookings: response.documents }),
-        200
+        200,corsHeaders
       );
     }
 
@@ -67,20 +67,20 @@ export default async ({ req, res, log }) => {
 
       return res.send(
         JSON.stringify({ error: false, booking: created }),
-        201
+        201,corsHeaders
       );
     }
 
     return res.send(
       JSON.stringify({ error: true, message: 'Invalid action' }),
-      400
+      400,corsHeaders
     );
   } catch (err) {
     log('DB function error:', err?.message || err);
     res.headers = corsHeaders;
     return res.send(
       JSON.stringify({ error: true, message: 'Server error' }),
-      500
+      500,corsHeaders
     );
   }
 };
