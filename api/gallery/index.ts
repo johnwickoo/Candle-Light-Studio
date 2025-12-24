@@ -1,3 +1,4 @@
+// api/gallery/index.ts
 export default async function handler(req: any, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { error: boolean; message: string; }): any; new(): any; }; }; }) {
   try {
     const r = await fetch(
