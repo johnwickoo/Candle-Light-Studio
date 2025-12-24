@@ -36,13 +36,18 @@ export default async ({ req, res, log }) => {
       const response = await databases.listDocuments(
         process.env.PUBLIC_APPWRITE_DATABASE_ID,
         process.env.PUBLIC_APPWRITE_TABLE_ID,
-        [Query.equal('date', date)]
+        [Query.equal("date", date)]
       );
-
-      return res.send(
-        JSON.stringify({ error: false, bookings: response.documents }),
-        200,corsHeaders
-      );
+      const bookings = response.documents;
+      const timeRanges = bookings.map(b => {
+        const [hours, minutes] = b.startTime.split(":").map(Number);
+        const startMin = hours * 60 + minutes;
+        const endMin = startMin + b.duration;
+        return { startMin, endMin };
+      });
+      log("TimeRanges:", timeRanges);
+      log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
+      return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
     }
 
     // CREATE BOOKING
