@@ -58,7 +58,7 @@ export default async ({ req, res, log }) => {
         // --- Generate Token and Link ---
         // 🔑 PASS the retrieved JWT_SECRET to the generator function
 
-        const BASE_VERIFICATION_URL = 'https://692c66e60024652f6922.fra.appwrite.run/';
+        const BASE_VERIFICATION_URL = 'https://692c66e60024652f6922.fra.appwrite.run';
  // Appwrite Function URL for verification
         const verificationToken = generateVerificationToken(bookingData.email, JWT_SECRET); 
         

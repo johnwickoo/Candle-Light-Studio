@@ -27,7 +27,9 @@ const gallery = () => {
         const fetchPhotosSecurely = async () => {
             try {
                 // 1. Call your Appwrite function endpoint
-                const response = await fetch('app/imageApiFetcher/index.ts'); 
+                const response = await fetch('https://6932a4ba000599fc5758.fra.appwrite.run', {
+                    method: 'GET',
+                }); 
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
