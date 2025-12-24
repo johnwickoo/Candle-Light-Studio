@@ -10,9 +10,11 @@ const functions = new Functions(client);
 
 export default async ({ req, res, log }) => {
   // ---- CORS ----
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
   if (req.method === 'OPTIONS') {
     return res.send('', 204);
@@ -36,13 +38,13 @@ export default async ({ req, res, log }) => {
         [Query.equal('date', date)]
       );
 
-      return res.json(
-        { error: false, bookings: response.documents },
+      return res.send(
+        JSON.stringify({ error: false, bookings: response.documents }),
         200
       );
     }
 
-    // CREATE BOOKING 
+    // CREATE BOOKING
     if (action === 'create') {
       const { booking } = body;
 
@@ -62,20 +64,20 @@ export default async ({ req, res, log }) => {
         )
         .catch(() => {});
 
-      return res.json(
-        { error: false, booking: created },
+      return res.send(
+        JSON.stringify({ error: false, booking: created }),
         201
       );
     }
 
-    return res.json(
-      { error: true, message: 'Invalid action' },
+    return res.send(
+      JSON.stringify({ error: true, message: 'Invalid action' }),
       400
     );
   } catch (err) {
-    log('DB function error:', err.message);
-    return res.json(
-      { error: true, message: 'Server error' },
+    log('DB function error:', err?.message || err);
+    return res.send(
+      JSON.stringify({ error: true, message: 'Server error' }),
       500
     );
   }
