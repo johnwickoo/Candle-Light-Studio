@@ -13,7 +13,7 @@ export default async ({ req, res }) => {
     'Access-Control-Allow-Headers': 'Content-Type',
   };
   if (req.method === 'OPTIONS') {
-    return res.send('', 204);
+    return res.send('', 204, corsHeaders);
   }
 
   try {
