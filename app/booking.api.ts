@@ -113,11 +113,17 @@
 //     }
 // };
 
-const BOOKING_FUNCTION_URL = import.meta.env.VITE_BOOKING_FUNCTION_URL;
-console.log("Booking Function URL:", BOOKING_FUNCTION_URL);
-if (!BOOKING_FUNCTION_URL) {
-  throw new Error("VITE_BOOKING_FUNCTION_URL is undefined");
-}
+import { Client, Functions, ExecutionMethod } from "appwrite";
+
+// Initialize the Client
+const client = new Client()
+    .setEndpoint('https://fra.cloud.appwrite.io/v1') 
+    .setProject('68d063fc000f50d84cd2'); // Your Project ID
+
+const functions = new Functions(client);
+
+// Use the Function ID instead of the URL
+const BOOKING_FUNCTION_ID = '6941d58b0021fa23e3dd'; 
 
 type BookingPayload = {
   name: string;
@@ -130,33 +136,43 @@ type BookingPayload = {
   notes?: string;
 };
 
-export const getBookings = async (date: string) => {
-  console.log(BOOKING_FUNCTION_URL)
-  const res = await fetch(BOOKING_FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action: "list",
-      date
-    }),
-  });
+/**
+ * HELPER: Executes the Appwrite function and parses the response
+ */
+const executeBookingAction = async (payload: object) => {
+  try {
+    const execution = await functions.createExecution(
+      BOOKING_FUNCTION_ID,
+      JSON.stringify(payload),
+      false, // async = false to wait for the response
+      '/',   // path
+      ExecutionMethod.POST
+    );
 
-  return res.json();
+    // Appwrite SDK returns a string in responseBody, so we parse it
+    // We also check the status code
+    if (execution.responseStatusCode >= 400) {
+      const errorData = JSON.parse(execution.responseBody || '{}');
+      throw new Error(errorData.message || `Execution failed with status ${execution.responseStatusCode}`);
+    }
+
+    return JSON.parse(execution.responseBody);
+  } catch (error: any) {
+    console.error("Appwrite Function Error:", error);
+    throw error;
+  }
+};
+
+export const getBookings = async (date: string) => {
+  return await executeBookingAction({
+    action: "list",
+    date
+  });
 };
 
 export const createBooking = async (booking: BookingPayload) => {
-  const res = await fetch(BOOKING_FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json", // 👈 This is critical
-    },
-    body: JSON.stringify({
-      action: "create",
-      booking
-    }),
+  return await executeBookingAction({
+    action: "create",
+    booking
   });
-
-  return res.json();
 };

@@ -17,7 +17,7 @@ export default function BookPage() {
   const [reload, setReload] = React.useState(false);
   const [cache, setCache] = React.useState<Record<string, any>>({}); // New cache state
   
-
+  
   React.useEffect(() => {
   const saved = localStorage.getItem("lastSelectedDate");
   if (saved) {
