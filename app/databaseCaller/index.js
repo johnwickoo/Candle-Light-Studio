@@ -11,14 +11,14 @@ const functions = new Functions(client);
 export default async ({ req, res, log }) => {
   // ---- CORS ----
   const corsHeaders = {
-    'Access-Control-Allow-Origin': ' * ',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
   if (req.method === 'OPTIONS') {
     res.headers = corsHeaders;
-    return res.send('', 204);
+    return res.send('', 204, corsHeaders);
   }
 
   try {
