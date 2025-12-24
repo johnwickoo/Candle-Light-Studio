@@ -40,13 +40,35 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={`relative w-full ${
-    isHome
-      ? " h-screen overflow-hidden bg-[url('/homebackground.jpeg')] bg-cover bg-center bg-no-repeat max-h-screen"
-      : "min-h-screen bg-white"
+      <body className={`relative min-h-screen ${
+    isHome ? "lg:h-screen lg:overflow-hidden bg-white" : "bg-white"
   }`}>
-    {isHome? <div className="absolute top-0 right-0 w-2/5 h-dvh bg-white"></div>:null}
+    
+    {isHome ? (
+      <div className="flex flex-col lg:flex-row h-full min-h-screen">
+        {/* Left/Top Section: The Image */}
+        <div className={`
+          relative w-full h-[40vh]lg:h-full lg:flex-1
+          bg-[url('/homebackground.jpeg')] bg-cover bg-center bg-no-repeat
+        `}>
+          {/* Optional Overlay for mobile readability */}
+          
+          <div className="absolute inset-0 bg-black/10 lg:hidden"></div>
+          
+        </div>
+
+        {/* Right/Bottom Section: The Content Area */}
+        <div className="w-full lg:w-[40%] bg-white p-6 lg:p-12 flex flex items-center justify-center overflow-x-auto">
+          {children}
+        </div>
+      </div>
+    ) : (
+      /* Standard Layout for other pages */
+      <div className="max-w-7xl mx-auto px-4">
         {children}
+      </div>
+    )}
+        
         <ScrollRestoration />
         <Scripts />
       </body>

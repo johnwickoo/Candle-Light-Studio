@@ -124,6 +124,10 @@ export default function BookingForm({ selectedDate, selectedStart, selectedDurat
           <select value={duration} onChange={(e)=>setDuration(Number(e.target.value))} className="w-full p-2 border rounded mt-1">
             <option value={60} disabled={!isDurationAllowed(selectedStart || "", 60, timeRanges)}>1 hour</option>
             <option value={120} disabled={!isDurationAllowed(selectedStart || "", 120, timeRanges)}>2 hours</option>
+            <option value={180} disabled={!isDurationAllowed(selectedStart || "", 180, timeRanges)}>3 hours</option>
+            <option value={240} disabled={!isDurationAllowed(selectedStart || "", 240, timeRanges)}>4 hours</option>
+            <option value={300} disabled={!isDurationAllowed(selectedStart || "", 300, timeRanges)}>5 hours</option>
+            <option value={360} disabled={!isDurationAllowed(selectedStart || "", 360, timeRanges)}>6 hours</option>
           </select>
         </label>
 

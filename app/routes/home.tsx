@@ -3,8 +3,8 @@ import React from 'react'
 
 const home = () => {
   return (
-    <div className="d-flex items-center justify-center relative min-h-screen w-full">
-     <h1 className='image-text'>Candle Light <br />Studio</h1>
+    <div className="text-center max-w-full">
+     <p className='image-text-black text-5xl md:text-7xl font-bold leading-tight drop-shadow-sm break-words'>Candle Light <br />Studio</p>
     </div>
   )
 } 
