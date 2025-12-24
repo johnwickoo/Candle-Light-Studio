@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Client, Functions, ExecutionMethod } from "appwrite";
+import { data } from "react-router";
 import { useGallery } from "~/components/GalleryContext";
-
-// 1. Initialize the SDK outside the component or in a separate config file
-const client = new Client()
-    .setEndpoint('https://fra.cloud.appwrite.io/v1') 
-    .setProject('68d063fc000f50d84cd2');
-
-const functions = new Functions(client);
 
 type errorType = string | null;
 
@@ -35,23 +28,11 @@ const Gallery = () => {
     if (hasLoaded) return;
     const fetchPhotosSecurely = async () => {
       try {
-        // 2. Use the SDK instead of fetch()
-        // This executes the function and waits for the response
-        const execution = await functions.createExecution(
-          '6932a4b8003ac1b7e5cc', // Your Function ID
-          '',                     // Body (empty for a GET-style list)
-          false,                  // async = false (Wait for the result)
-          '/',                    // path
-          ExecutionMethod.GET     // method
-        );
-
-        // 3. Appwrite SDK returns a string in responseBody; we must parse it
-        if (execution.responseStatusCode >= 400) {
-            throw new Error(`Function returned status ${execution.responseStatusCode}`);
-        }
-
-        const data = JSON.parse(execution.responseBody);
-
+        setIsLoading(true);
+        const res = await fetch('/api/gallery');
+        console.log("Gallery Response:", res);  
+        const data = await res.json();
+        console.log("Gallery Data:", data);
         if (data.error) {
           setError(data.message);
         } else {
@@ -59,6 +40,7 @@ const Gallery = () => {
           setHasLoaded(true);
         }
       } catch (e) {
+        
         console.error("Execution Error:", e);
         setError(getErrorMessage(e));
       } finally {
