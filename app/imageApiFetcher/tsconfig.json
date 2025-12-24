@@ -1,8 +1,8 @@
 {   
   "compilerOptions": {
     "target": "es2020",            
-    "module": "commonjs",           
-    "moduleResolution": "node",     
+    "module": "NodeNext",           
+    "moduleResolution": "NodeNext",     
     "esModuleInterop": true,        
     "outDir": "./dist",             // Compiled output goes here
     "rootDir": "./",                // <--- FIX 1: The source files are in the root (./)
