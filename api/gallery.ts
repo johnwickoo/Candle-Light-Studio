@@ -10,16 +10,9 @@ const unsplash = createApi({
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 1. Set CORS Headers manually for Vercel
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*' ,
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
-  // Apply CORS headers to all responses
-  Object.entries(corsHeaders).forEach(([key, value]) => {
-    res.setHeader(key, value);
-  });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // 2. Handle Preflight OPTIONS request
   if (req.method === 'OPTIONS') {
