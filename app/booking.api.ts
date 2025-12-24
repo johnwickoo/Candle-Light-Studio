@@ -131,6 +131,7 @@ type BookingPayload = {
 };
 
 export const getBookings = async (date: string) => {
+  console.log(BOOKING_FUNCTION_URL)
   const res = await fetch(BOOKING_FUNCTION_URL, {
     method: "POST",
     headers: {

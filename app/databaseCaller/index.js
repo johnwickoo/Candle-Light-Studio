@@ -10,13 +10,14 @@ const functions = new Functions(client);
 
 export default async ({ req, res, log }) => {
   // ---- CORS ----
-  res.headers = {
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
   if (req.method === 'OPTIONS') {
+    res.headers = corsHeaders;
     return res.send('', 204);
   }
 
@@ -25,7 +26,7 @@ export default async ({ req, res, log }) => {
       typeof req.body === 'string'
         ? JSON.parse(req.body)
         : req.body;
-
+    res.headers = corsHeaders;
     const { action } = body;
 
     // LIST BOOKINGS
@@ -76,6 +77,7 @@ export default async ({ req, res, log }) => {
     );
   } catch (err) {
     log('DB function error:', err?.message || err);
+    res.headers = corsHeaders;
     return res.send(
       JSON.stringify({ error: true, message: 'Server error' }),
       500
