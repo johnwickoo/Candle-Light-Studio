@@ -7,10 +7,11 @@ const unsplash = createApi({
 });
 
 export default async ({ req, res }) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*' ,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
   if (req.method === 'OPTIONS') {
     return res.send('', 204);
   }
@@ -22,18 +23,18 @@ export default async ({ req, res }) => {
     });
 
     if (response.type === 'error') {
-      return res.json({ error: true, message: response.errors.join(', ') }, 500);
+      return res.json({ error: true, message: response.errors.join(', ') }, 500, corsHeaders);
     }
 
     return res.json(
       { error: false, photos: response.response.results },
-      200
+      200, corsHeaders
     );
   } catch (err) {
     console.error(err);
     return res.json(
       { error: true, message: 'Gallery fetch failed' },
-      500
+      500, corsHeaders
     );
   }
 };
