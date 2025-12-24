@@ -1,13 +1,5 @@
 import { createApi } from 'unsplash-js';
-import { createApi } from 'unsplash-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-// Vercel has built-in fetch support in Node 18+, 
-// so we don't need to import node-fetch manually.
-const unsplash = createApi({
-  accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
-  fetch: fetch,
-});
 
 // Vercel has built-in fetch support in Node 18+, 
 // so we don't need to import node-fetch manually.
