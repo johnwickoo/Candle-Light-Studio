@@ -13,6 +13,7 @@ import Navbar from "./components/Navbar";
 import "./app.css";
 import type { reactRouter } from "@react-router/dev/vite";
 import { useLocation } from "react-router";
+import { GalleryProvider } from "./components/GalleryContext";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -58,10 +59,12 @@ export default function App() {
   const isHome = location.pathname === "/";
   return (
     <div className="pt-0">
-      <Navbar />
-      <main className="container mx-auto p-4">
-        <Outlet />
-      </main>
+      <GalleryProvider>
+        <Navbar />
+        <main className="container mx-auto p-4">
+          <Outlet />
+        </main>
+      </GalleryProvider>
     </div>
   );
 }

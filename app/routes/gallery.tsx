@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Client, Functions, ExecutionMethod } from "appwrite";
+import { useGallery } from "~/components/GalleryContext";
 
 // 1. Initialize the SDK outside the component or in a separate config file
 const client = new Client()
@@ -11,10 +12,10 @@ const functions = new Functions(client);
 type errorType = string | null;
 
 const Gallery = () => {
-  const [photos, setPhotos] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { photos, setPhotos, hasLoaded, setHasLoaded } = useGallery();
+  const [isLoading, setIsLoading] = useState(!hasLoaded);
   const [error, setError] = useState<errorType>(null);
-
+  
   // Helper functions for error handling
   function getErrorMessage(e: unknown): string {
     if (isErrorWithMessage(e)) return e.message;
@@ -31,6 +32,7 @@ const Gallery = () => {
   }
 
   useEffect(() => {
+    if (hasLoaded) return;
     const fetchPhotosSecurely = async () => {
       try {
         // 2. Use the SDK instead of fetch()
@@ -54,6 +56,7 @@ const Gallery = () => {
           setError(data.message);
         } else {
           setPhotos(data.photos || []);
+          setHasLoaded(true);
         }
       } catch (e) {
         console.error("Execution Error:", e);
@@ -64,9 +67,9 @@ const Gallery = () => {
     };
 
     fetchPhotosSecurely();
-  }, []);
+  }, [hasLoaded, setPhotos, setHasLoaded]);
 
-  if (isLoading) return <div className="p-4">Loading gallery...</div>;
+  if (isLoading) return <div className="p-10">Loading gallery...</div>;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
 
   return (
