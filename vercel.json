@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/gallery.ts": {
-      "memory": 1024
-    }
-  }
-}
