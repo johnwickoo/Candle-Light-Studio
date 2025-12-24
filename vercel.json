@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/**/*.ts": {
+    "api/gallery.ts": {
       "memory": 1024
     }
   }

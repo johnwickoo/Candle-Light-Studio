@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-router/node": "^7.9.2",
     "@react-router/serve": "^7.9.2",
+    "@vercel/node": "^5.5.16",
     "appwrite": "^21.4.0",
     "isbot": "^5.1.31",
     "jsonwebtoken": "^9.0.2",
