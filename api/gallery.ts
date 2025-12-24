@@ -1,17 +1,58 @@
+import { createApi } from 'unsplash-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// Vercel has built-in fetch support in Node 18+, 
+// so we don't need to import node-fetch manually.
+const unsplash = createApi({
+  accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
+  fetch: fetch,
+});
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // 1. Set CORS Headers manually for Vercel
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*' ,
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+
+  // Apply CORS headers to all responses
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  // 2. Handle Preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   try {
-    const r = await fetch('https://6932a4ba000599fc5758.fra.appwrite.run', { 
-      method: 'GET' 
+    // 3. Call Unsplash directly from Vercel's server
+    const response = await unsplash.photos.list({
+      page: 1,
+      perPage: 12,
     });
 
-    const data = await r.json();
+    if (response.type === 'error') {
+      return res.status(500).json({ 
+        error: true, 
+        message: response.errors.join(', ') 
+      });
+    }
 
-    // Appwrite preference: Send data, status, and headers
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(200).json(data);
-  } catch (e) {
-    return res.status(500).json({ error: true, message: 'Proxy failed' });
+    // 4. Return the results
+    // Vercel will automatically set Content-Type: application/json
+    return res.status(200).json({
+      error: false,
+      photos: response.response.results
+    });
+
+  } catch (err: any) {
+    console.error('Vercel Unsplash Error:', err);
+    return res.status(500).json({ 
+      error: true, 
+      message: 'Gallery fetch failed from Vercel side',
+      details: err.message
+    });
   }
 }
