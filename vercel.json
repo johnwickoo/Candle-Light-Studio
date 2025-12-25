@@ -1,8 +1,34 @@
 {
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
+
+### Option 2: Move API to a Different Path
+
+Instead of `/api/gallery`, use a path that won't conflict:
+
+**Rename your function file:**
+```
+api/gallery.ts  →  api/unsplash-gallery.ts
