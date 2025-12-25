@@ -25,31 +25,44 @@ const Gallery = () => {
   }
 
   useEffect(() => {
-    if (hasLoaded) return;
-    const fetchPhotosSecurely = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch('/api/gallery');
-        console.log("Gallery Response:", res);  
-        const data = await res.json();
-        console.log("Gallery Data:", data);
-        if (data.error) {
-          setError(data.message);
-        } else {
-          setPhotos(data.photos || []);
-          setHasLoaded(true);
-        }
-      } catch (e) {
-        
-        console.error("Execution Error:", e);
-        setError(getErrorMessage(e));
-      } finally {
-        setIsLoading(false);
+  if (hasLoaded) return;
+  const fetchPhotosSecurely = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/gallery');
+      console.log("Gallery Response:", res);
+      
+      // Check if response is actually JSON
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error("Received HTML instead of JSON:", text.substring(0, 200));
+        throw new Error('Server returned HTML instead of JSON. API endpoint may not be configured correctly.');
       }
-    };
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      console.log("Gallery Data:", data);
+      
+      if (data.error) {
+        setError(data.message);
+      } else {
+        setPhotos(data.photos || []);
+        setHasLoaded(true);
+      }
+    } catch (e) {
+      console.error("Execution Error:", e);
+      setError(getErrorMessage(e));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchPhotosSecurely();
-  }, [hasLoaded, setPhotos, setHasLoaded]);
+  fetchPhotosSecurely();
+}, [hasLoaded, setPhotos, setHasLoaded]);
 
   if (isLoading) return <div className="p-10">Loading gallery...</div>;
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;

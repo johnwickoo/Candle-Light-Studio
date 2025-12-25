@@ -1,12 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/gallery",
-      "destination": "/api/gallery.ts"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     }
   ]
 }
