@@ -25,10 +25,3 @@
   ]
 }
 
-### Option 2: Move API to a Different Path
-
-Instead of `/api/gallery`, use a path that won't conflict:
-
-**Rename your function file:**
-```
-api/gallery.ts  →  api/unsplash-gallery.ts
