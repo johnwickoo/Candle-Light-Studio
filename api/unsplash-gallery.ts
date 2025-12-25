@@ -33,8 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // 4. Return the results
-    // Vercel will automatically set Content-Type: application/json
+  
     return res.status(200).json({
       error: false,
       photos: response.response.results
