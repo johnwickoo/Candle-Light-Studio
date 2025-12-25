@@ -33,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-  
+  console.log('Vercel Unsplash Response:', response); 
     return res.status(200).json({
       error: false,
       photos: response.response.results
