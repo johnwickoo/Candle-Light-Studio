@@ -4,7 +4,7 @@
   "outputDirectory": "build/client",
   "functions": {
     "functions/**/*.ts": {
-      "runtime": "nodejs24.x"
+      "runtime": "@vercel/node"
     }
   },
   "rewrites": [
