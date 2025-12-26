@@ -1,11 +1,10 @@
 import { createApi } from 'unsplash-js';
-import { NextResponse } from 'next/server';
 
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
 });
 
-export async function GET(request: Request) {
+export async function loader() {
   try {
     const response = await unsplash.photos.list({
       page: 1,
@@ -13,7 +12,7 @@ export async function GET(request: Request) {
     });
 
     if (response.type === 'error') {
-      return NextResponse.json(
+      return Response.json(
         { 
           error: true, 
           message: response.errors.join(', ') 
@@ -22,14 +21,14 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json({
+    return Response.json({
       error: false,
       photos: response.response.results
     });
 
   } catch (err: any) {
     console.error('Unsplash Error:', err);
-    return NextResponse.json(
+    return Response.json(
       { 
         error: true, 
         message: 'Gallery fetch failed',
