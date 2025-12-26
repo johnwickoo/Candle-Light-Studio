@@ -29,7 +29,7 @@ const Gallery = () => {
   const fetchPhotosSecurely = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch('/api/unsplash-gallery');
+      const res = await fetch('/api/gallery');
       console.log("Gallery Response:", res);
       
       // Check if response is actually JSON
