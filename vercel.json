@@ -1,10 +1,16 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "build/client",
   "installCommand": "npm install",
+  "outputDirectory": "build/client",
   "functions": {
-    "api/**/*.ts": {
+    "functions/**/*.ts": {
       "runtime": "nodejs24.x"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/functions/:path*"
+    }
+  ]
 }
