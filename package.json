@@ -17,6 +17,7 @@
     "appwrite": "^21.4.0",
     "isbot": "^5.1.31",
     "jsonwebtoken": "^9.0.2",
+    "node-appwrite": "^21.1.0",
     "nodemailer": "^7.0.11",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
