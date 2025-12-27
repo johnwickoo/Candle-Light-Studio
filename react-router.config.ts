@@ -1,11 +1,9 @@
 import type { Config } from "@react-router/dev/config";
+import { vercelPreset } from '@vercel/react-router/vite';
 
 export default {
   // Config options...
   // Server-side render by default, to enable SPA mode set this to `false`
   ssr: true,
-  serverBundles: ({ branch }) => {
-    const isApiRoute = branch.some(route => route.id.startsWith("api/"));
-    return isApiRoute ? "api" : "default";
-  },
+  presets: [vercelPreset()],
 } satisfies Config;
