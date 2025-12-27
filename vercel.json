@@ -1,14 +1,8 @@
 {
-  "functions": {
-    "api/bookings.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "routes": [
     {
-      "src": "/api/bookings",
-      "dest": "/api/bookings"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
       "handle": "filesystem"
