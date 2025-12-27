@@ -9,11 +9,11 @@ const client = new Client()
 const databases = new Databases(client);
 const functions = new Functions(client);
 
+// THIS MUST BE A DEFAULT EXPORT
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -22,7 +22,6 @@ export default async function handler(
     return res.status(200).end();
   }
 
-  // GET - List bookings by date
   if (req.method === 'GET') {
     const { date } = req.query;
 
@@ -62,7 +61,6 @@ export default async function handler(
     }
   }
 
-  // POST - Create booking
   if (req.method === 'POST') {
     try {
       const { booking } = req.body;
@@ -81,7 +79,6 @@ export default async function handler(
         booking
       );
 
-      // Send confirmation email (fire-and-forget)
       if (process.env.APPWRITE_EMAIL_FUNCTION_ID) {
         functions
           .createExecution(
