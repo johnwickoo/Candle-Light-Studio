@@ -9,16 +9,19 @@ const databases = new Databases(client);
 const functions = new Functions(client);
 
 export default async ({ req, res, log }) => {
-  // ---- CORS ----
+  // ---- CORS Headers ----
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 
+  // Set CORS headers immediately
+  res.headers = corsHeaders;
+
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    res.headers = corsHeaders;
-    return res.send('', 204, corsHeaders);
+    return res.send('', 204);
   }
 
   try {
@@ -26,7 +29,7 @@ export default async ({ req, res, log }) => {
       typeof req.body === 'string'
         ? JSON.parse(req.body)
         : req.body;
-    res.headers = corsHeaders;
+    
     const { action } = body;
 
     // LIST BOOKINGS
@@ -38,6 +41,7 @@ export default async ({ req, res, log }) => {
         process.env.PUBLIC_APPWRITE_TABLE_ID,
         [Query.equal("date", date)]
       );
+      
       const bookings = response.documents;
       const timeRanges = bookings.map(b => {
         const [hours, minutes] = b.startTime.split(":").map(Number);
@@ -45,9 +49,11 @@ export default async ({ req, res, log }) => {
         const endMin = startMin + b.duration;
         return { startMin, endMin };
       });
+      
       log("TimeRanges:", timeRanges);
-      log("List Bookings Response:", { bookings, timeRanges }); // Log the response from listing bookings
-      return res.json({ error: false, bookings, timeRanges }, 200, corsHeaders);
+      log("List Bookings Response:", { bookings, timeRanges });
+      
+      return res.json({ error: false, bookings, timeRanges }, 200);
     }
 
     // CREATE BOOKING
@@ -68,24 +74,20 @@ export default async ({ req, res, log }) => {
           JSON.stringify(created),
           false
         )
-        .catch(() => {});
+        .catch((err) => {
+          log('Email function error:', err);
+        });
 
-      return res.send(
-        JSON.stringify({ error: false, booking: created }),
-        201,corsHeaders
-      );
+      return res.json({ error: false, booking: created }, 201);
     }
 
-    return res.send(
-      JSON.stringify({ error: true, message: 'Invalid action' }),
-      400,corsHeaders
-    );
+    return res.json({ error: true, message: 'Invalid action' }, 400);
+    
   } catch (err) {
     log('DB function error:', err?.message || err);
-    res.headers = corsHeaders;
-    return res.send(
-      JSON.stringify({ error: true, message: 'Server error' }),
-      500,corsHeaders
+    return res.json(
+      { error: true, message: err?.message || 'Server error' },
+      500
     );
   }
 };
