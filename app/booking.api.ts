@@ -8,16 +8,12 @@ type BookingPayload = {
   service: string;
   notes?: string;
 };
-const BOOKINGS_FUNCTION_ID = import.meta.env.VITE_BOOKINGS_FUNCTION_ID;
-const BOOKINGS_FUNCTION_URL =
-  `https://cloud.appwrite.io/v1/functions/${BOOKINGS_FUNCTION_ID}/executions`;
+const BOOKINGS_FUNCTION_URL = import.meta.env.VITE_BOOKINGS_FUNCTION_URL;
 
 export const getBookings = async (date: string) => {
-  const res = await fetch(
-    `${BOOKINGS_FUNCTION_URL}?date=${encodeURIComponent(date)}`,
-    { method: "GET" }
-  );
-
+   console.log(`Fetching bookings for date: ${date}`);
+  const res = await fetch(`/api/bookings?date=${encodeURIComponent(date)}`);
+  console.log(`Response status: ${res.status}`);
   if (!res.ok) {
     const err = await res.json();
     throw new Error(err.message);
