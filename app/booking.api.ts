@@ -13,7 +13,8 @@ export const getBookings = async (date: string) => {
   const response = await fetch(`/api/bookings?date=${encodeURIComponent(date)}`);
   
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const error = await response.json();
+    throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
   
   return response.json();
@@ -27,7 +28,8 @@ export const createBooking = async (booking: BookingPayload) => {
   });
   
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const error = await response.json();
+    throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
   
   return response.json();

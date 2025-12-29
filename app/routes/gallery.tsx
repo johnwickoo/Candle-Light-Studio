@@ -4,7 +4,7 @@ import { createApi } from 'unsplash-js';
 import { useGallery } from "~/components/GalleryContext";
 
 const unsplash = createApi({
-  accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
+  accessKey: "W8so0FCFsKhQkMWyhpmDm5V6CzBFmvebUh7EZas9KTg",
 });
 
 // This runs on the SERVER - your API key is safe

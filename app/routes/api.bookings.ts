@@ -1,5 +1,6 @@
-import type { Route } from "./+types/api.bookings";
+// app/routes/api.bookings.ts
 import { Client, Databases, Query, Functions } from 'node-appwrite';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
 
 const client = new Client()
   .setEndpoint('https://fra.cloud.appwrite.io/v1')
@@ -9,21 +10,27 @@ const client = new Client()
 const databases = new Databases(client);
 const functions = new Functions(client);
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const date = url.searchParams.get('date');
 
   if (!date) {
-    return Response.json({ 
-      error: true, 
-      message: 'Date parameter is required' 
-    }, { status: 400 });
+    return new Response(
+      JSON.stringify({ 
+        error: true, 
+        message: 'Date parameter is required' 
+      }), 
+      { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 
   try {
     const response = await databases.listDocuments(
-      process.env.APPWRITE_DATABASE_ID!,
-      process.env.APPWRITE_TABLE_ID!,
+     import.meta.env.VITE_APPWRITE_DATABASE_ID!,
+      import.meta.env.VITE_APPWRITE_TABLE_ID!,
       [Query.equal("date", date)]
     );
 
@@ -35,36 +42,59 @@ export async function loader({ request }: Route.LoaderArgs) {
       return { startMin, endMin };
     });
 
-    return Response.json({ 
-      error: false, 
-      bookings, 
-      timeRanges 
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: false, 
+        bookings, 
+        timeRanges 
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   } catch (error: any) {
     console.error('List bookings error:', error);
-    return Response.json({ 
-      error: true, 
-      message: error.message || 'Failed to fetch bookings' 
-    }, { status: 500 });
+    return new Response(
+      JSON.stringify({ 
+        error: true, 
+        message: error.message || 'Failed to fetch bookings' 
+      }), 
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
-    return Response.json({ 
-      error: true, 
-      message: 'Method not allowed' 
-    }, { status: 405 });
+    return new Response(
+      JSON.stringify({ 
+        error: true, 
+        message: 'Method not allowed' 
+      }), 
+      { 
+        status: 405,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 
   try {
     const { booking } = await request.json();
 
     if (!booking) {
-      return Response.json({ 
-        error: true, 
-        message: 'Booking data is required' 
-      }, { status: 400 });
+      return new Response(
+        JSON.stringify({ 
+          error: true, 
+          message: 'Booking data is required' 
+        }), 
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const created = await databases.createDocument(
@@ -86,15 +116,26 @@ export async function action({ request }: Route.ActionArgs) {
         });
     }
 
-    return Response.json({ 
-      error: false, 
-      booking: created 
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: false, 
+        booking: created 
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   } catch (error: any) {
     console.error('Create booking error:', error);
-    return Response.json({ 
-      error: true, 
-      message: error.message || 'Failed to create booking' 
-    }, { status: 500 });
+    return new Response(
+      JSON.stringify({ 
+        error: true, 
+        message: error.message || 'Failed to create booking' 
+      }), 
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
