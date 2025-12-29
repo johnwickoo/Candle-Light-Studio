@@ -8,29 +8,37 @@ type BookingPayload = {
   service: string;
   notes?: string;
 };
+const BOOKINGS_FUNCTION_ID = import.meta.env.VITE_BOOKINGS_FUNCTION_ID;
+const BOOKINGS_FUNCTION_URL =
+  `https://cloud.appwrite.io/v1/functions/${BOOKINGS_FUNCTION_ID}/executions`;
 
 export const getBookings = async (date: string) => {
-  const response = await fetch(`/api/bookings?date=${encodeURIComponent(date)}`);
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+  const res = await fetch(
+    `${BOOKINGS_FUNCTION_URL}?date=${encodeURIComponent(date)}`,
+    { method: "GET" }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message);
   }
-  
-  return response.json();
+
+  return res.json();
 };
 
+
 export const createBooking = async (booking: BookingPayload) => {
-  const response = await fetch('/api/bookings', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ booking })
+  const res = await fetch(BOOKINGS_FUNCTION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ booking }),
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message);
   }
-  
-  return response.json();
+
+  return res.json();
 };
+

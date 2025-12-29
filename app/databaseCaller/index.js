@@ -1,93 +1,112 @@
-import { Client, Databases, Query, Functions } from 'node-appwrite';
-
-const client = new Client()
-  .setEndpoint('https://fra.cloud.appwrite.io/v1')
-  .setProject(process.env.PUBLIC_APPWRITE_PROJECT_ID)
-  .setKey(process.env.APPWRITE_API_KEY);
-
-const databases = new Databases(client);
-const functions = new Functions(client);
+import { Client, Databases, Query, Functions } from "node-appwrite";
 
 export default async ({ req, res, log }) => {
-  // ---- CORS Headers ----
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  /* -------------------- CORS -------------------- */
+  res.headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  // Set CORS headers immediately
-  res.headers = corsHeaders;
-
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.send('', 204);
+  if (req.method === "OPTIONS") {
+    return res.send("", 204);
   }
 
-  try {
-    const body =
-      typeof req.body === 'string'
-        ? JSON.parse(req.body)
-        : req.body;
-    
-    const { action } = body;
+  /* -------------------- CLIENT -------------------- */
+  const client = new Client()
+    .setEndpoint(process.env.APPWRITE_ENDPOINT)
+    .setProject(process.env.APPWRITE_PROJECT_ID)
+    .setKey(process.env.APPWRITE_API_KEY);
 
-    // LIST BOOKINGS
-    if (action === 'list') {
-      const { date } = body;
+  const databases = new Databases(client);
+  const functions = new Functions(client);
+
+  try {
+    /* ==================== LIST BOOKINGS ==================== */
+    if (req.method === "GET") {
+      const date = req.query?.date;
+
+      if (!date) {
+        return res.json(
+          { error: true, message: "Date query parameter is required" },
+          400
+        );
+      }
 
       const response = await databases.listDocuments(
-        process.env.PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.PUBLIC_APPWRITE_TABLE_ID,
+        process.env.APPWRITE_DATABASE_ID,
+        process.env.APPWRITE_COLLECTION_ID,
         [Query.equal("date", date)]
       );
-      
+
       const bookings = response.documents;
-      const timeRanges = bookings.map(b => {
-        const [hours, minutes] = b.startTime.split(":").map(Number);
-        const startMin = hours * 60 + minutes;
-        const endMin = startMin + b.duration;
-        return { startMin, endMin };
+
+      const timeRanges = bookings.map((b) => {
+        const [h, m] = b.startTime.split(":").map(Number);
+        const startMin = h * 60 + m;
+        return {
+          startMin,
+          endMin: startMin + b.duration,
+        };
       });
-      
-      log("TimeRanges:", timeRanges);
-      log("List Bookings Response:", { bookings, timeRanges });
-      
-      return res.json({ error: false, bookings, timeRanges }, 200);
+
+      log("Bookings fetched:", bookings.length);
+
+      return res.json({
+        error: false,
+        bookings,
+        timeRanges,
+      });
     }
 
-    // CREATE BOOKING
-    if (action === 'create') {
-      const { booking } = body;
+    /* ==================== CREATE BOOKING ==================== */
+    if (req.method === "POST") {
+      const { booking } =
+        typeof req.body === "string"
+          ? JSON.parse(req.body)
+          : req.body || {};
+
+      if (!booking) {
+        return res.json(
+          { error: true, message: "Booking payload is required" },
+          400
+        );
+      }
 
       const created = await databases.createDocument(
-        process.env.PUBLIC_APPWRITE_DATABASE_ID,
-        process.env.PUBLIC_APPWRITE_TABLE_ID,
-        'unique()',
+        process.env.APPWRITE_DATABASE_ID,
+        process.env.APPWRITE_COLLECTION_ID,
+        "unique()",
         booking
       );
 
-      // Fire-and-forget email
-      functions
-        .createExecution(
-          process.env.PUBLIC_APPWRITE_EMAIL_FUNCTION_ID,
-          JSON.stringify(created),
-          false
-        )
-        .catch((err) => {
-          log('Email function error:', err);
-        });
+      /* fire-and-forget email */
+      if (process.env.APPWRITE_EMAIL_FUNCTION_ID) {
+        functions
+          .createExecution(
+            process.env.APPWRITE_EMAIL_FUNCTION_ID,
+            JSON.stringify(created),
+            false
+          )
+          .catch((err) => log("Email function error:", err));
+      }
 
-      return res.json({ error: false, booking: created }, 201);
+      return res.json(
+        { error: false, booking: created },
+        201
+      );
     }
 
-    return res.json({ error: true, message: 'Invalid action' }, 400);
-    
-  } catch (err) {
-    log('DB function error:', err?.message || err);
     return res.json(
-      { error: true, message: err?.message || 'Server error' },
+      { error: true, message: "Method not allowed" },
+      405
+    );
+  } catch (err) {
+    log("Function error:", err?.message || err);
+    return res.json(
+      { error: true, message: "Internal server error" },
       500
     );
   }
 };
+        return res.json({ success: true, message: 'Email verified successfully.' }, 200);
