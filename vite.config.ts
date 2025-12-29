@@ -9,8 +9,5 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
-  ssr: {
-    noExternal: ['node-appwrite']
-  }
 
 });
