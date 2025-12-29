@@ -1,15 +1,21 @@
 {
-  "routes": [
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "build/client",
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/api/:path*",
+      "destination": "/functions/:path*"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/((?!api/.*).*)",
+      "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "functions/**/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  }
 }
