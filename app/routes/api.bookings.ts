@@ -29,8 +29,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   try {
     const response = await databases.listDocuments(
-     import.meta.env.VITE_APPWRITE_DATABASE_ID!,
-      import.meta.env.VITE_APPWRITE_TABLE_ID!,
+      process.env.APPWRITE_DATABASE_ID!,
+      process.env.APPWRITE_TABLE_ID!,
       [Query.equal("date", date)]
     );
 
