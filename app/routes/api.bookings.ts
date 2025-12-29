@@ -1,7 +1,8 @@
-// app/routes/api.bookings.ts
+// app/routes/api.bookings.tsx (or .ts)
 import { Client, Databases, Query, Functions } from 'node-appwrite';
 import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
 
+// Server-side only Appwrite client
 const client = new Client()
   .setEndpoint('https://fra.cloud.appwrite.io/v1')
   .setProject(process.env.APPWRITE_PROJECT_ID!)
@@ -139,3 +140,8 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 }
+
+// CRITICAL: Mark this as a resource route (API only, no UI)
+export const handle = {
+  // This prevents the route from being treated as a UI route
+};

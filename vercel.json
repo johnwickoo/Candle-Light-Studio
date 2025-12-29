@@ -14,8 +14,6 @@
     }
   ],
   "functions": {
-    "functions/**/*.ts": {
-      "runtime": "nodejs24.x"
-    }
+    
   }
 }
