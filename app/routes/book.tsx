@@ -2,9 +2,12 @@ import React from "react";
 import Calendar from "../components/Calender";
 import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
-import { databases } from "../lib/appwrite.server";
+import { databases, functions } from "../lib/appwrite.server";
 import { useLoaderData, type LoaderFunctionArgs, useNavigate, useSearchParams, redirect , type ActionFunctionArgs} from "react-router";
 import { Query } from "node-appwrite";
+
+
+
 
 type LoaderData = {
   bookings: any[];
@@ -40,6 +43,11 @@ export async function action({ request }: ActionFunctionArgs) {
     "unique()",
     booking
   );
+  await functions.createExecution(
+   import.meta.env.VITE_EMAIL_FUNCTION_ID!,
+    JSON.stringify(booking)
+  );
+
 
   return redirect(`?date=${booking.date}`);
 }
@@ -136,3 +144,12 @@ export default function BookPage() {
     </div>
   );
 }
+// todo Prevent double-booking (race-condition safe)
+
+// Return validation errors to the form
+
+// Auto-refresh calendar after booking
+
+// Email confirmation hook
+
+// Admin dashboard
