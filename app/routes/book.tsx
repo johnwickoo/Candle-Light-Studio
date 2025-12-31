@@ -2,7 +2,6 @@ import React from "react";
 import Calendar from "../components/Calender";
 import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
-import { getBookings } from "../booking.api";
 import Toast from "../components/toast";
 import { databases } from "../lib/appwrite.server";
 import { useLoaderData, type LoaderFunctionArgs, useNavigate, useSearchParams} from "react-router";
@@ -11,6 +10,7 @@ import { Query } from "node-appwrite";
 type LoaderData = {
   bookings: any[];
   timeRanges: { startMin: number; endMin: number }[];
+  markedDates: string[];
 };
 
 
@@ -27,14 +27,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
     COLLECTION_ID,
     [
       Query.select(["date"]),
-      Query.limit(5000),
+      Query.limit(5000)
     ]
   );
+   const markedDates = Array.from(
+    new Set(allBookings.documents.map((b: any) => b.date))
+  );
+
 
   if (!date) {
     return {
       bookings: [],
       timeRanges: [],
+      markedDates
     } satisfies LoaderData;
   }
 
@@ -55,6 +60,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return {
     bookings,
     timeRanges,
+    markedDates
   } satisfies LoaderData;
 }
 
@@ -65,10 +71,10 @@ export default function BookPage() {
   const [searchParams] = useSearchParams();
   const selectedDate = searchParams.get("date");
 
-  const { bookings, timeRanges } = useLoaderData<LoaderData>();
+  const { bookings, timeRanges, markedDates } = useLoaderData<LoaderData>();
   console.log("Bookings loaded:", bookings);
 
-  const marked = bookings.map((b: any) => b.date);
+  const marked = markedDates;
 
   // const [selectedDate, setSelectedDate] = React.useState<string | null>(null);
   const [selectedStart, setSelectedStart] = React.useState<string | null>(null);
@@ -78,45 +84,6 @@ export default function BookPage() {
   const [cache, setCache] = React.useState<Record<string, any>>({}); // New cache state
   
   
-//   React.useEffect(() => {
-//   const saved = localStorage.getItem("lastSelectedDate");
-//   if (saved) {
-//     setSelectedDate(saved);
-//   }
-// }, [reload]);
-
-
-// React.useEffect(() => {
-//   if (!selectedDate) return;
-
-//   // Cache hit
-//   if (cache[selectedDate] && !reload) {
-//     const bk = cache[selectedDate];
-//     setBookings(bk.bookings);
-//     setTimeRanges(bk.timeRanges);
-//     setMarked(bk.bookings.map((b: any) => b.date));
-//     return;
-//   }
-
-//   // Fetch
-//  const { bookings } = useLoaderData<typeof loader>().then((data) => {
-//     setBookings(data.bookings);
-//     setTimeRanges(data.timeRanges);
-//     setMarked(data.bookings.map((b: any) => b.date));
-
-//     setCache(prev => ({
-//       ...prev,
-//       [selectedDate]: {
-//         bookings: data.bookings,
-//         timeRanges: data.timeRanges,
-//       },
-//     }));
-
-//     localStorage.setItem("lastSelectedDate", selectedDate);
-    
-
-//   });
-// }, [selectedDate, reload]);
 
 
   return (
