@@ -4,65 +4,126 @@ import TimeSlots from "../components/Timeslots";
 import BookingForm from "../components/BookingForm";
 import { getBookings } from "../booking.api";
 import Toast from "../components/toast";
+import { databases } from "../lib/appwrite.server";
+import { useLoaderData, type LoaderFunctionArgs, useNavigate, useSearchParams} from "react-router";
+import { Query } from "node-appwrite";
+
+type LoaderData = {
+  bookings: any[];
+  timeRanges: { startMin: number; endMin: number }[];
+};
+
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const date = url.searchParams.get("date");
+
+  const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID!;
+  const TB_ID = import.meta.env.VITE_APPWRITE_TABLE_ID!;
+  const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID!; 
+
+  const allBookings = await databases.listDocuments(
+    DB_ID,
+    COLLECTION_ID,
+    [
+      Query.select(["date"]),
+      Query.limit(5000),
+    ]
+  );
+
+  if (!date) {
+    return {
+      bookings: [],
+      timeRanges: [],
+    } satisfies LoaderData;
+  }
+
+  const response = await databases.listDocuments(
+    DB_ID,
+    COLLECTION_ID,
+    [Query.equal("date", date)]
+  );
+
+  const bookings = response.documents;
+  
+  const timeRanges = bookings.map((b: any) => {
+    const [h, m] = b.startTime.split(":").map(Number);
+    const startMin = h * 60 + m;
+    return { startMin, endMin: startMin + b.duration };
+  });
+
+  return {
+    bookings,
+    timeRanges,
+  } satisfies LoaderData;
+}
+
 
 
 export default function BookPage() {
-  const [selectedDate, setSelectedDate] = React.useState<string | null>(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedDate = searchParams.get("date");
+
+  const { bookings, timeRanges } = useLoaderData<LoaderData>();
+  console.log("Bookings loaded:", bookings);
+
+  const marked = bookings.map((b: any) => b.date);
+
+  // const [selectedDate, setSelectedDate] = React.useState<string | null>(null);
   const [selectedStart, setSelectedStart] = React.useState<string | null>(null);
   const [duration, setDuration] = React.useState(60);
-  const [marked, setMarked] = React.useState<string[]>([]);
-  const [bookings, setBookings] = React.useState<any[]>([]);
-  const [timeRanges, setTimeRanges] = React.useState<{ startMin: number; endMin: number }[]>([]); 
   const [showToast, setShowToast] = React.useState(false);
   const [reload, setReload] = React.useState(false);
   const [cache, setCache] = React.useState<Record<string, any>>({}); // New cache state
   
   
-  React.useEffect(() => {
-  const saved = localStorage.getItem("lastSelectedDate");
-  if (saved) {
-    setSelectedDate(saved);
-  }
-}, [reload]);
+//   React.useEffect(() => {
+//   const saved = localStorage.getItem("lastSelectedDate");
+//   if (saved) {
+//     setSelectedDate(saved);
+//   }
+// }, [reload]);
 
 
-React.useEffect(() => {
-  if (!selectedDate) return;
+// React.useEffect(() => {
+//   if (!selectedDate) return;
 
-  // Cache hit
-  if (cache[selectedDate] && !reload) {
-    const bk = cache[selectedDate];
-    setBookings(bk.bookings);
-    setTimeRanges(bk.timeRanges);
-    setMarked(bk.bookings.map((b: any) => b.date));
-    return;
-  }
+//   // Cache hit
+//   if (cache[selectedDate] && !reload) {
+//     const bk = cache[selectedDate];
+//     setBookings(bk.bookings);
+//     setTimeRanges(bk.timeRanges);
+//     setMarked(bk.bookings.map((b: any) => b.date));
+//     return;
+//   }
 
-  // Fetch
-  getBookings(selectedDate).then((data) => {
-    setBookings(data.bookings);
-    setTimeRanges(data.timeRanges);
-    setMarked(data.bookings.map((b: any) => b.date));
+//   // Fetch
+//  const { bookings } = useLoaderData<typeof loader>().then((data) => {
+//     setBookings(data.bookings);
+//     setTimeRanges(data.timeRanges);
+//     setMarked(data.bookings.map((b: any) => b.date));
 
-    setCache(prev => ({
-      ...prev,
-      [selectedDate]: {
-        bookings: data.bookings,
-        timeRanges: data.timeRanges,
-      },
-    }));
+//     setCache(prev => ({
+//       ...prev,
+//       [selectedDate]: {
+//         bookings: data.bookings,
+//         timeRanges: data.timeRanges,
+//       },
+//     }));
 
-    localStorage.setItem("lastSelectedDate", selectedDate);
+//     localStorage.setItem("lastSelectedDate", selectedDate);
     
 
-  });
-}, [selectedDate, reload]);
+//   });
+// }, [selectedDate, reload]);
 
 
   return (
     <div className="mt-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
       <div className="col-span-1">
-        <Calendar selected={selectedDate} onSelect={(d)=>{ setSelectedDate(d); setSelectedStart(null); }} markedDates={marked} reload={reload} />
+        <Calendar selected={selectedDate} onSelect={(date) => {
+    navigate(`?date=${date}`);}} markedDates={marked} reload={reload} />
       </div>
 
       <div className="col-span-1">
