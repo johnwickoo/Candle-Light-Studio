@@ -1,8 +1,8 @@
-@import "tailwindcss";
+
 
 @import url('https://fonts.googleapis.com/css2?family=Corinthia:wght@400;700&family=Lexend+Deca:wght@100..900&family=Outfit:wght@100..900&family=Wittgenstein:ital,wght@0,400..900;1,400..900&display=swap');
 
-
+@import "tailwindcss";
 h1{
   font-size: 40px;
 }

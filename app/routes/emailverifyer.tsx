@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'; // Added useCallback
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 const VERIFICATION_ENDPOINT = import.meta.env.VITE_EMAILVERIFIER_FUNCTION_URL;
 
