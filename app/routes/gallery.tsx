@@ -5,7 +5,7 @@ import { useGallery } from "../components/GalleryContext";
 
 
 const unsplash = createApi({
-  accessKey: process.env.VITE_APPWRITE_API_KEY!,
+  accessKey: process.env.VITE_API_KEY!,
 });
 
 // This runs on the SERVER - your API key is safe
