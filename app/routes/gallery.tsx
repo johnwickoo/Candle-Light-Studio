@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import type { Route } from "./+types/gallery";
 import { createApi } from 'unsplash-js';
 import { useGallery } from "~/components/GalleryContext";
+import { p } from "node_modules/@react-router/dev/dist/routes-CZR-bKRt";
 
 const unsplash = createApi({
-  accessKey: "W8so0FCFsKhQkMWyhpmDm5V6CzBFmvebUh7EZas9KTg",
+  accessKey: process.env.VITE_APPWRITE_API_KEY!,
 });
 
 // This runs on the SERVER - your API key is safe

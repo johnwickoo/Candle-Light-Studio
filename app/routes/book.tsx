@@ -15,10 +15,10 @@ type LoaderData = {
   markedDates: string[];
   howManyPercentOfDayBooked: number;
 };
-const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID!;
-const TB_ID = import.meta.env.VITE_APPWRITE_TABLE_ID!;
-const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID!; 
- 
+const DB_ID = process.env.VITE_APPWRITE_DATABASE_ID!;
+const TB_ID = process.env.VITE_APPWRITE_TABLE_ID!;
+const COLLECTION_ID = process.env.VITE_APPWRITE_COLLECTION_ID!; 
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
@@ -57,8 +57,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const date = url.searchParams.get("date");
 
-  const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID!;
-  const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID!; 
+  const DB_ID = process.env.VITE_APPWRITE_DATABASE_ID!;
+  const COLLECTION_ID = process.env.VITE_APPWRITE_COLLECTION_ID!; 
 
   const allBookings = await databases.listDocuments(
     DB_ID,
