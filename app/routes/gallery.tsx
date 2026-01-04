@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import type { Route } from "./+types/gallery";
 import { createApi } from 'unsplash-js';
-import { useGallery } from "~/components/GalleryContext";
-import { p } from "node_modules/@react-router/dev/dist/routes-CZR-bKRt";
+import { useGallery } from "../components/GalleryContext";
+
 
 const unsplash = createApi({
   accessKey: process.env.VITE_APPWRITE_API_KEY!,
